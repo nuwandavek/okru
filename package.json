@@ -2,6 +2,7 @@
   "name": "okrd",
   "version": "0.1.0",
   "private": true,
+  "homepage" : "http://vivekaithal.co/okru",
   "dependencies": {
     "@material-ui/core": "^4.9.0",
     "@material-ui/icons": "^4.5.1",

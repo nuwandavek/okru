@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/okru/static/css/main.d1b05096.chunk.css",
+    "main.js": "/okru/static/js/main.08d962c0.chunk.js",
+    "main.js.map": "/okru/static/js/main.08d962c0.chunk.js.map",
+    "runtime-main.js": "/okru/static/js/runtime-main.10a4ce04.js",
+    "runtime-main.js.map": "/okru/static/js/runtime-main.10a4ce04.js.map",
+    "static/js/2.e36e31b6.chunk.js": "/okru/static/js/2.e36e31b6.chunk.js",
+    "static/js/2.e36e31b6.chunk.js.map": "/okru/static/js/2.e36e31b6.chunk.js.map",
+    "index.html": "/okru/index.html",
+    "precache-manifest.0cb386637f725b025eb4d8d218d3868f.js": "/okru/precache-manifest.0cb386637f725b025eb4d8d218d3868f.js",
+    "service-worker.js": "/okru/service-worker.js",
+    "static/css/main.d1b05096.chunk.css.map": "/okru/static/css/main.d1b05096.chunk.css.map",
+    "static/js/2.e36e31b6.chunk.js.LICENSE": "/okru/static/js/2.e36e31b6.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.10a4ce04.js",
+    "static/js/2.e36e31b6.chunk.js",
+    "static/css/main.d1b05096.chunk.css",
+    "static/js/main.08d962c0.chunk.js"
+  ]
+}
