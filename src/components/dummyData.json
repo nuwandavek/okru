@@ -1,0 +1,119 @@
+{
+    "defaultDialogContent": {
+        "id": 0,
+        "title": "Lose weight and get fit!",
+        "failureMode": "",
+        "description": "I've to become more active and generally avoid a sedentary lifestyle.",
+        "category": "fitness",
+        "keyResults": [
+            {
+                "result": "Go to the Gym at least 5 days a week",
+                "metric": "12 weeks"
+            },
+            {
+                "result": "Fast till 12pm at least 70 days",
+                "metric": "70 days"
+            }
+        ]
+    },
+    "dialogContent": {
+        "id": 0,
+        "title": "Lose weight and get fit!",
+        "description": "I've to become more active and generally avoid a sedentary lifestyle.",
+        "category": "fitness",
+        "failureMode": "",
+        "keyResults": [
+            {
+                "id": 0,
+                "result": "Go to the Gym at least 5 days a week",
+                "metric": "12 weeks"
+            },
+            {
+                "id": 1,
+                "result": "Fast till 12pm at least 70 days",
+                "metric": "70 days"
+            }
+        ]
+    },
+    "okrList": [
+        {
+            "id": 0,
+            "title": "Get Fit and lose weight",
+            "description": "Yoyoyoyo",
+            "failureMode": "",
+            "category": "relationships",
+            "keyResults": [
+                {
+                    "id": 0,
+                    "result": "Do this 10 times",
+                    "metric": 0
+                },
+                {
+                    "id": 1,
+                    "result": "Do that 10 times",
+                    "metric": 5
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "title": "Obj bluh bluh",
+            "description": "Yoyoyoyo",
+            "failureMode": "",
+            "category": "fitness",
+            "keyResults": [
+                {
+                    "id": 0,
+                    "result": "Do this 10 times",
+                    "metric": 0
+                },
+                {
+                    "id": 1,
+                    "result": "Do that 10 times",
+                    "metric": 5
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "Obj bluh bluh",
+            "description": "Yoyoyoyo",
+            "failureMode": "",
+            "category": "creative",
+            "keyResults": [
+                {
+                    "id": 0,
+                    "result": "Do this 10 times",
+                    "metric": 0
+                },
+                {
+                    "id": 1,
+                    "result": "Do that 10 times",
+                    "metric": 5
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "Obj bluh bluh",
+            "description": "Yoyoyoyo",
+            "failureMode": "",
+            "category": "work",
+            "keyResults": [
+                {
+                    "id": 0,
+                    "result": "Do this 10 times",
+                    "metric": 0
+                },
+                {
+                    "id": 1,
+                    "result": "Do that 10 times",
+                    "metric": 5
+                }
+            ]
+        }
+    ],
+    "following": [
+        
+    ]
+}
