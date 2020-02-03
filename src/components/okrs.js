@@ -165,7 +165,7 @@ class Okrs extends React.Component {
                     <Typography color="textPrimary">Q1</Typography>
                 </Breadcrumbs>
                 
-                    {selfView?'':(isSignedIn?<Box className={classes.followBox}><Switch
+                    {selfView?'':(isSignedIn&&okrList.length>0?<Box className={classes.followBox}><Switch
                     checked={isFollowing}
                     onChange={handleFollow}
                     value="follow"
@@ -174,7 +174,7 @@ class Okrs extends React.Component {
                 />{followText}</Box>:'')}
                 
                 </Grid>
-                {okrList.map((okr) => (<ExpansionPanel key={okr.id} elevation={0}>
+                {okrList.length>0?(okrList.map((okr) => (<ExpansionPanel key={okr.id} elevation={0}>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={"panel-" + okr.id + "-content"}
@@ -226,11 +226,16 @@ class Okrs extends React.Component {
 
 
                     </ExpansionPanelDetails>
-                </ExpansionPanel>))}
-                {selfView&&isSignedIn?<Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>
+                </ExpansionPanel>))):
+                <Typography>No OKRs yet!</Typography>
+            }
+                {selfView&&isSignedIn?<Grid container direction="column" alignItems="center" justify="center">
+                <Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>
                 
                     <AddIcon />
-                </Fab>:''}
+                </Fab>
+                <Typography variant="caption">Add New OKR</Typography>
+                </Grid>:''}
             </Paper>
 
         )

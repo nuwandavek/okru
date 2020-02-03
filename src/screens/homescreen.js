@@ -86,7 +86,7 @@ class HomeScreen extends React.Component {
     handleFollow = (event) => {
         if(!this.state.isFollowing){
             this.setState({isFollowing:!this.state.isFollowing});
-            const newFollowRef = firebase.database().ref('userlist/'+this.state.loggedInUser).push();
+            const newFollowRef = firebase.database().ref('userlist/'+this.state.user.uid).push();
             newFollowRef.set(this.state.userBeingViewed);
         }
         else{
@@ -96,7 +96,7 @@ class HomeScreen extends React.Component {
                 console.log(d,this.state.followlist[d]);
                 return this.state.followlist[d]==this.state.userBeingViewed}
                 )
-            firebase.database().ref('userlist/'+this.state.loggedInUser+'/'+followID).remove()
+            firebase.database().ref('userlist/'+this.state.user.uid+'/'+followID).remove()
             
         }
         
@@ -124,7 +124,7 @@ class HomeScreen extends React.Component {
                     this.setState({ loggedInUser:userID });
                     
 
-                    usersRef.child(userID).once('value', (snapshot) => {
+                    usersRef.child(user.uid).once('value', (snapshot) => {
 
 
                         if (snapshot.exists()) {
@@ -137,15 +137,16 @@ class HomeScreen extends React.Component {
                                 photoURL: user.photoURL,
                                 email: user.email,
                                 uid: user.uid,
+                                userID : userID
                             }
-                            firebase.database().ref('users/' + userID).set(userToStore);
-                            const newUserRef = firebase.database().ref('userlist/all').push();
+                            firebase.database().ref('users/' + user.uid).set(userToStore);
+                            const newUserRef = firebase.database().ref('userlist/all/'+user.uid);
                             newUserRef.set(userID);
 
 
                         }
-                        const curUser = firebase.database().ref('users/' + userID);
-                        console.log('users/' + userID);
+                        const curUser = firebase.database().ref('users/' + user.uid);
+                        console.log('users/' + user.uid);
                         curUser.on('value', (snapshot) => {
                             this.setState({ 'curUser': snapshot.val() }, () => {
                                 console.log('user-state-updated!', snapshot.val(), this.state);
@@ -154,20 +155,7 @@ class HomeScreen extends React.Component {
                                 if(this.state.userRequested===null){
                                     this.setState({selfView:true});
                                     this.setState({userBeingViewed:userID});
-                                    firebase.database().ref('okrs').child(userID).once('value', (snapshot) => {
-                                        this.setState({ 'curUserOKRs': snapshot.val() }, () => {
-                                            console.log('user-okrs-updated!', snapshot.val(), this.state);
-                                        });
-                                    })
-                                }
-                                else{
-                                    firebase.database().ref('okrs').child(this.state.userRequested).once('value', (snapshot) => {
-                                        if(this.state.userRequested === userID){
-                                            this.setState({selfView:true});
-                                        }
-                                        else{
-                                            this.setState({selfView:false});
-                                        }
+                                    firebase.database().ref('okrs').child(user.uid).once('value', (snapshot) => {
                                         if(snapshot.val()!==null){
                                             this.setState({ 'curUserOKRs': snapshot.val() }, () => {
                                                 console.log('user-okrs-updated!', snapshot.val(), this.state);
@@ -176,9 +164,33 @@ class HomeScreen extends React.Component {
                                         
                                     })
                                 }
+                                else{
+                                    firebase.database().ref('userlist/all').once('value', (d) => {
+                                        const dd = d.val();
+                                        const userX = Object.keys(dd).find(key => dd[key] === this.state.userRequested);
+                                        
+                                        if (userX!==undefined&&userX!==null){
+                                            firebase.database().ref('okrs').child(userX).once('value', (snapshot) => {
+                                                if(this.state.userRequested === userID){
+                                                    this.setState({selfView:true});
+                                                }
+                                                else{
+                                                    this.setState({selfView:false});
+                                                }
+                                                if(snapshot.val()!==null){
+                                                    this.setState({ 'curUserOKRs': snapshot.val() }, () => {
+                                                        console.log('user-okrs-updated!', snapshot.val(), this.state);
+                                                    });
+                                                }
+                                                
+                                            })
+                                        }
+                                        
+                                    })
+                                }
                                 
 
-                                firebase.database().ref('userlist/'+userID).on('value', (snapshot) => {
+                                firebase.database().ref('userlist/'+user.uid).on('value', (snapshot) => {
                                     if(snapshot.val()!==null){
                                         this.setState({ followlist: snapshot.val() }, () => {
                                         console.log('follow-list-updated!', snapshot.val());
@@ -211,22 +223,34 @@ class HomeScreen extends React.Component {
         })
 
         if(!this.state.isSignedIn&&this.state.userRequested!==null){
-            firebase.database().ref('okrs').child(this.state.userRequested).once('value', (snapshot) => {
-                this.setState({selfView:false});
-                if(snapshot.val()!==null){
-                    this.setState({ 'curUserOKRs': snapshot.val() }, () => {
-                        console.log('user-okrs-updated!', snapshot.val(), this.state);
-                    });
-                }
+            firebase.database().ref('userlist/all').once('value', (d) => {
+                const dd = d.val();
+                const userX = Object.keys(dd).find(key => {
+                    return dd[key] === this.state.userRequested;
+                });
                 
+                if (userX!==undefined&&userX!==null){
+                                        
+                    firebase.database().ref('okrs').child(userX).once('value', (snapshot) => {
+                        this.setState({selfView:false});
+                        if(snapshot.val()!==null){
+                            this.setState({ 'curUserOKRs': snapshot.val() }, () => {
+                                console.log('user-okrs-updated!', snapshot.val(), this.state);
+                            });
+                        }
+                        
+                    })
+                }
             })
     
         }
 
         firebase.database().ref('userlist/all').once('value', (snapshot) => {
+            if(snapshot.val()!==null){
             this.setState({ userlist: Object.values(snapshot.val()) }, () => {
                 console.log('user-list-updated!', Object.values(snapshot.val()));
             });
+            }
         })
 
         
@@ -276,7 +300,7 @@ class HomeScreen extends React.Component {
         });
 
 
-        firebase.database().ref('okrs/'+this.state.userBeingViewed).set({
+        firebase.database().ref('okrs/'+this.state.user.uid).set({
         ...newOKRList
         });
 

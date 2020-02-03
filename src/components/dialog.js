@@ -340,11 +340,14 @@ class Edit extends React.Component {
                             })
                         }
                         <Grid container direction="column"  alignItems="center" style={{margin:"20px"}}>
-                            <Fab color="primary" aria-label="add" className={classes.darkBackground}
+                        <Grid container direction="column" alignItems="center" justify="center">
+                        <Fab color="primary" aria-label="add" className={classes.darkBackground}
                             onClick={this.addKR}
                         >
                             <AddIcon />
                         </Fab>
+                        <Typography variant="caption">Add New Key Result</Typography>
+                        </Grid>
 
                         <Grid container direction="row" justify="space-evenly"  style={{paddingTop:"50px"}}>
                             <Button

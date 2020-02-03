@@ -1,37 +1,39 @@
 {
     "defaultDialogContent": {
         "id": 0,
-        "title": "Lose weight and get fit!",
+        "title": "",
         "failureMode": "",
-        "description": "I've to become more active and generally avoid a sedentary lifestyle.",
+        "description": "",
         "category": "fitness",
         "keyResults": [
             {
-                "result": "Go to the Gym at least 5 days a week",
-                "metric": "12 weeks"
+                "id": 0,
+                "result": "",
+                "metric": ""
             },
             {
-                "result": "Fast till 12pm at least 70 days",
-                "metric": "70 days"
+                "id": 1,
+                "result": "",
+                "metric": ""
             }
         ]
     },
     "dialogContent": {
         "id": 0,
-        "title": "Lose weight and get fit!",
-        "description": "I've to become more active and generally avoid a sedentary lifestyle.",
-        "category": "fitness",
+        "title": "",
+        "description": "",
+        "category": "",
         "failureMode": "",
         "keyResults": [
             {
                 "id": 0,
-                "result": "Go to the Gym at least 5 days a week",
-                "metric": "12 weeks"
+                "result": "",
+                "metric": ""
             },
             {
                 "id": 1,
-                "result": "Fast till 12pm at least 70 days",
-                "metric": "70 days"
+                "result": "",
+                "metric": ""
             }
         ]
     },
