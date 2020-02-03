@@ -21,6 +21,7 @@ import {
     ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Box, Breadcrumbs, Chip,
     List, ListItemAvatar, Avatar, ListItemText, Fab, Divider, Switch
 } from '@material-ui/core';
+import { textAlign } from '@material-ui/system';
 
 
 const styles = theme => ({
@@ -71,7 +72,8 @@ const styles = theme => ({
         fontSize: 10
     },
     description: {
-        paddingBottom: "10px"
+        paddingBottom: "10px",
+        textAlign: 'left'
     },
     darkBackground: {
         background: "#333"
@@ -207,7 +209,7 @@ class Okrs extends React.Component {
                                             <TrendingUpIcon />
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText primary={kr.result} secondary={"SYSTEM METRIC : " + kr.metric} />
+                                    <ListItemText primary={kr.result} secondary={"System Metric : " + kr.metric} />
                                 </ListItem>
                             ))}
                         </List>
