@@ -420,16 +420,16 @@ class HomeScreen extends React.Component {
                                 firebaseAuth={firebase.auth()}
                             />
                             <Divider style={{ width: "30%", margin: "30px" }} />
-                            <Grid item xs={12} sm={4} md={6} lg={4} xl={4}>
+                            <Grid container direction="column" item xs={10} sm={6} md={6} lg={4} xl={4}>
                                 <Typography variant="subtitle1">This is a <b><i>Measure What Matters</i></b> meets <b><i>Elephant In The Brain</i></b> meets <b><i>Atomic Habits</i></b> effort to
                                 use personal OKRs that track System Metrics and positively decieve our silly brains. You can set your quarterly OKRs, pre-commit metrics, estimate possible failure
                     modes and follow your friends.</Typography>
 
                                 <Typography variant="overline">More features are coming soon!</Typography>
-
+                                <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/?user=vivekaithal44')}>See a sample OKR</Button>
                             </Grid>
 
-                            <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/?user=vivekaithal44')}>See a sample OKR</Button>
+                            
                         </div>
                     )
                 }
