@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && echo 'some data for the file' >> ./build/CNAME",
+    "build": "react-scripts build && echo 'okru.app' >> ./build/CNAME",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
