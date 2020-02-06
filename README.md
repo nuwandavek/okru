@@ -5,6 +5,17 @@ This is a ***Measure What Matters*** meets ***Elephant In The Brain*** meets ***
 
 Checkout the issues and the kanban for this project!
 
+## Features : Now
+- Add/edit OKRs (Os, KRs, failure modes, categories)
+- Google login
+- Follow people
+
+
+## Features : To Be Added
+- Search by user id
+- Printable OKRs
+- Update progress on OKRs
+- Mail cues for updates and aggregate updates of people you're following
 
 ```
 For any feedback, comments or discussion, you can reach out to me at vivekaithal44[at]gmail[dot]com

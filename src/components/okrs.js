@@ -15,12 +15,16 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import PaletteIcon from '@material-ui/icons/Palette';
 import AddIcon from '@material-ui/icons/Add';
+import PrintIcon from '@material-ui/icons/Print';
 
 import {
-    Paper, Grid, Typography, ListItem,
+    Paper, Grid, Typography, ListItem, Button,
     ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Box, Breadcrumbs, Chip,
     List, ListItemAvatar, Avatar, ListItemText, Fab, Divider, Switch
 } from '@material-ui/core';
+
+import jsPDF from 'jspdf';
+
 import { textAlign } from '@material-ui/system';
 
 
@@ -85,15 +89,15 @@ const styles = theme => ({
     edit: {
         background: "#333",
         color: '#fff',
-        marginTop: "20px",
+        boxShadow: "none",
         "&:hover": {
             color: "#333",
             background: '#fff'
         },
     },
-    followBox:{
+    followBox: {
         display: "flex",
-        justifyContent:"center",
+        justifyContent: "center",
         alignItems: "center",
         flexDirection: "column"
     }
@@ -147,7 +151,123 @@ class Okrs extends React.Component {
 
 
         }
+        this.printOKR = this.printOKR.bind(this);
 
+
+    }
+
+
+    printOKR = (okrs, user) => {
+        console.log("print");
+        var doc = new jsPDF({
+            orientation : 'landscape'
+        });
+
+        
+
+        const width = 297
+        const height = 210
+        const paddingHorizontal = 20
+        const paddingVertical = 20
+        const gutter = 2
+        const columnPad = 3
+        
+
+        const columnWidth = (width - 2*paddingHorizontal - (okrs.length-1)*gutter)/okrs.length;
+        const columnHeight = height - 2*paddingVertical;
+        
+        function x(val){
+            return val+paddingHorizontal
+        }
+        function y(val){
+            return val+paddingVertical
+        }
+
+        console.log(columnWidth, columnHeight, doc.getFontList())
+        
+        doc.setFont('helvetica')
+        doc.setFontSize(70)
+        doc.text(parseInt(width/2), y(0), 'okru', {align:'center'})
+        doc.setTextColor('#999')
+        doc.setFontSize(15)
+        doc.setFont('courier')
+        doc.text(parseInt(width/2), y(10), user+'/2020/Q1', {align:'center'})
+        doc.setFont('helvetica')
+        doc.setTextColor('#000')
+        
+        doc.setFontStyle('bold')
+        doc.setFontSize(10)
+        doc.text(17, y(60), 'OBJECTIVES', {rotationDirection:1, angle: 90, charSpace: 2})
+        doc.text(17, y(140), 'KEY RESULTS', {rotationDirection:1, angle: 90, charSpace: 2})
+        doc.setDrawColor('#aaa')
+        doc.setFontSize(7)
+        doc.setFont('courier')
+        doc.text(width-80, height-2, ('https://okru.app/?user='+user), {charSpace: 0})
+        
+
+        okrs.forEach((okr,i)=>{
+            let line = 25
+            let step = 5
+            
+            doc.setTextColor('#fff')
+            doc.setFont('helvetica')
+            doc.setDrawColor('#000')
+            doc.setFontSize(15)
+            doc.roundedRect(x(i*(columnWidth+gutter)), y(15), columnWidth, columnHeight, 3, 3, 'S')
+            doc.setFillColor('#333')
+            doc.roundedRect(x(i*(columnWidth+gutter)), y(15), columnWidth, 50, 3, 3, 'F')
+            doc.setFontStyle('bold')
+            var splitTitle = doc.splitTextToSize(okr.title, columnWidth-2*columnPad);
+            for (var j = 0; j < splitTitle.length; j++) {
+
+                doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
+                line=line+step
+            }
+            doc.setFontStyle('normal')
+            doc.setFontSize(10)
+            var splitTitle = doc.splitTextToSize(okr.description, columnWidth-2*columnPad);
+            for (var j = 0; j < splitTitle.length; j++) {
+
+                doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
+                line=line+step
+            }
+            line = 75;
+            doc.setTextColor('#000')
+            okr.keyResults.forEach((kr)=>{
+                var splitTitle = doc.splitTextToSize((kr.result+' [System Metric : '+kr.metric+'] '), columnWidth-2*columnPad);
+                for (var j = 0; j < splitTitle.length; j++) {
+
+                    doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
+                    line=line+step
+                }
+                doc.setDrawColor('#aaa')
+                doc.line(x(i*(columnWidth+gutter)+columnPad),y(line),x(i*(columnWidth+gutter)+columnWidth-columnPad),y(line),'F')
+                line = line+8;
+            });
+            var splitTitle = doc.splitTextToSize(('Possible Failure Mode : '+okr.failureMode), columnWidth-2*columnPad);
+            for (var j = 0; j < splitTitle.length; j++) {
+
+                doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
+                line=line+step
+            }
+            
+            
+
+        })
+        
+        // Save the Data
+        doc.save('okru.pdf')
+        
+        // var string = doc.output('datauristring');
+        // var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
+        // var x = window.open();
+        // x.document.open();
+        // x.document.write(iframe);
+        // x.document.close();
+
+        
+
+  
 
     }
 
@@ -155,28 +275,35 @@ class Okrs extends React.Component {
     render() {
         const { classes, okrList, handleOpenDialog, selfView, isSignedIn, userBeingViewed, isFollowing, handleFollow } = this.props;
         // console.log('in okr component',okrList);
-        const followText = (isFollowing?<Typography variant="caption">Unfollow</Typography>
-        :<Typography  variant="caption">Follow</Typography>)
-        
+        const followText = (isFollowing ? <Typography variant="caption">Unfollow</Typography>
+            : <Typography variant="caption">Follow</Typography>)
+
         return (
             <Paper className={classes.root} elevation={0}>
                 <Grid container direction="row" justify="space-between" alignItems="center">
-                <Breadcrumbs className={classes.brumb} aria-label="breadcrumb">
-                    <Typography color="inherit">{userBeingViewed}</Typography>
-                    <Typography color="inherit">2020</Typography>
-                    <Typography color="textPrimary">Q1</Typography>
-                </Breadcrumbs>
-                
-                    {selfView?'':(isSignedIn&&okrList.length>0?<Box className={classes.followBox}><Switch
-                    checked={isFollowing}
-                    onChange={handleFollow}
-                    value="follow"
-                    color="primary"
-                    inputProps={{ 'aria-label': 'default checkbox' }}
-                />{followText}</Box>:'')}
-                
+                    <Breadcrumbs className={classes.brumb} aria-label="breadcrumb">
+                        <Typography color="inherit">{userBeingViewed}</Typography>
+                        <Typography color="inherit">2020</Typography>
+                        <Typography color="textPrimary">Q1</Typography>
+                    </Breadcrumbs>
+
+                    {selfView && isSignedIn ? 
+                    <Fab color="primary" aria-label="add" size="small" className={classes.edit} onClick={()=>this.printOKR(okrList, userBeingViewed)}>
+
+                        <PrintIcon fontSize="small" />
+                    </Fab>
+                      : (isSignedIn && okrList.length > 0 ? <Box className={classes.followBox}><Switch
+                            checked={isFollowing}
+                            onChange={handleFollow}
+                            value="follow"
+                            color="primary"
+                            inputProps={{ 'aria-label': 'default checkbox' }}
+
+
+                        />{followText}</Box> : '')}
+
                 </Grid>
-                {okrList.length>0?(okrList.map((okr) => (<ExpansionPanel key={okr.id} elevation={0}>
+                {okrList.length > 0 ? (okrList.map((okr) => (<ExpansionPanel key={okr.id} elevation={0}>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={"panel-" + okr.id + "-content"}
@@ -194,7 +321,7 @@ class Okrs extends React.Component {
                                 {this.state.chips[okr.category]}
 
                             </Box>
-                           
+
 
                         </Box>
                     </ExpansionPanelSummary>
@@ -214,13 +341,13 @@ class Okrs extends React.Component {
                             ))}
                         </List>
                         <Typography variant="body2" className={classes.description}>
-                                    <b>Possible Failure Mode : </b>{okr.failureMode}
-                            </Typography>
+                            <b>Possible Failure Mode : </b>{okr.failureMode}
+                        </Typography>
                         <Grid container direction="row" justify="flex-end" style={{ width: '100%', display: "flex" }}>
-                            {selfView&&isSignedIn?<Fab color="primary" aria-label="add" className={classes.edit}
+                            {selfView && isSignedIn ? <Fab size="small" color="primary" aria-label="add" className={classes.edit}
                                 onClick={() => handleOpenDialog(okr.id)}>
-                                <EditIcon size="small" fontSize="small"/>
-                            </Fab>:''}
+                                <EditIcon fontSize="small" />
+                            </Fab> : ''}
 
                             <Divider style={{ marginTop: "20px", width: "100%" }} />
                         </Grid>
@@ -228,16 +355,16 @@ class Okrs extends React.Component {
 
 
                     </ExpansionPanelDetails>
-                </ExpansionPanel>))):
-                <Typography>No OKRs yet!</Typography>
-            }
-                {selfView&&isSignedIn?<Grid container direction="column" alignItems="center" justify="center">
-                <Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>
-                
-                    <AddIcon />
-                </Fab>
-                <Typography variant="caption">Add New OKR</Typography>
-                </Grid>:''}
+                </ExpansionPanel>))) :
+                    <Typography>No OKRs yet!</Typography>
+                }
+                {selfView && isSignedIn ? <Grid container direction="column" alignItems="center" justify="center">
+                    <Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>
+
+                        <AddIcon />
+                    </Fab>
+                    <Typography variant="caption">Add New OKR</Typography>
+                </Grid> : ''}
             </Paper>
 
         )

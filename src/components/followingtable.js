@@ -34,7 +34,7 @@ class FollowingTable extends React.Component {
         super(props);
         this.state = {
             page: 0,
-            rowsPerPage: 10
+            rowsPerPage: 5
         }
 
         this.handleChangePage = this.handleChangePage.bind(this);
