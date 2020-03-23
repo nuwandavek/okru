@@ -16,6 +16,8 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import PaletteIcon from '@material-ui/icons/Palette';
 import AddIcon from '@material-ui/icons/Add';
 import PrintIcon from '@material-ui/icons/Print';
+import SpeedIcon from '@material-ui/icons/Speed';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 import {
     Paper, Grid, Typography, ListItem, Button,
@@ -100,6 +102,14 @@ const styles = theme => ({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column"
+    },
+    homeAdd: {
+        marginTop: "50px"
+    },
+    kr: {
+        borderLeft: "5px #000 solid",
+        paddingLeft: "20px",
+        marginBottom: "10px"
     }
 });
 
@@ -109,42 +119,49 @@ class Okrs extends React.Component {
 
     constructor(props) {
         super(props);
-        const chipColor = '#333';
+        const chipColor = '#eee';
+        const chipTextColor = '#000';
+
 
         this.state = {
             chips: {
 
                 relationships: <Chip
-                    style={{ background: chipColor, color: '#fff' }}
+                    style={{ background: chipColor, color: chipTextColor }}
+                    // variant="outlined"
                     size="small"
-                    icon={<FavoriteIcon style={{ background: chipColor, color: '#fff' }} />}
+                    icon={<FavoriteIcon style={{ color: chipTextColor }} />}
                     label="Relationships"
                 />,
                 fitness: <Chip
                     size="small"
-                    style={{ background: chipColor, color: '#fff' }}
-                    icon={<FitnessCenterIcon style={{ background: chipColor, color: '#fff' }} />}
+                    // variant="outlined"
+                    style={{ background: chipColor, color: chipTextColor }}
+                    icon={<FitnessCenterIcon style={{ color: chipTextColor }} />}
                     label="Fitness"
                 />,
                 work:
                     <Chip
-                        style={{ background: chipColor, color: '#fff' }}
+                        style={{ background: chipColor, color: chipTextColor }}
                         size="small"
-                        icon={<WorkIcon style={{ background: chipColor, color: '#fff' }} />}
+                        // variant="outlined"
+                        icon={<WorkIcon style={{ color: chipTextColor }} />}
                         label="Work"
                     />,
                 creative:
                     <Chip
                         size="small"
-                        style={{ background: chipColor, color: '#fff' }}
-                        icon={<PaletteIcon style={{ background: chipColor, color: '#fff' }} />}
+                        // variant="outlined"
+                        style={{ background: chipColor, color: chipTextColor }}
+                        icon={<PaletteIcon style={{ color: chipTextColor }} />}
                         label="Creative"
                     />,
                 other:
                     <Chip
                         size="small"
-                        style={{ background: chipColor, color: '#fff' }}
-                        icon={<SettingsIcon style={{ background: chipColor, color: '#fff' }} />}
+                        // variant="outlined"
+                        style={{ background: chipColor, color: chipTextColor }}
+                        icon={<SettingsIcon style={{ color: chipTextColor }} />}
                         label="Other"
                     />
             }
@@ -152,18 +169,19 @@ class Okrs extends React.Component {
 
         }
         this.printOKR = this.printOKR.bind(this);
+        this.findWeeksinQuarter = this.findWeeksinQuarter.bind(this);
 
 
     }
 
 
     printOKR = (okrs, user) => {
-        console.log("print");
+        // console.log("print");
         var doc = new jsPDF({
-            orientation : 'landscape'
+            orientation: 'landscape'
         });
 
-        
+
 
         const width = 297
         const height = 210
@@ -171,93 +189,93 @@ class Okrs extends React.Component {
         const paddingVertical = 20
         const gutter = 2
         const columnPad = 3
-        
 
-        const columnWidth = (width - 2*paddingHorizontal - (okrs.length-1)*gutter)/okrs.length;
-        const columnHeight = height - 2*paddingVertical;
-        
-        function x(val){
-            return val+paddingHorizontal
+
+        const columnWidth = (width - 2 * paddingHorizontal - (okrs.length - 1) * gutter) / okrs.length;
+        const columnHeight = height - 2 * paddingVertical;
+
+        function x(val) {
+            return val + paddingHorizontal
         }
-        function y(val){
-            return val+paddingVertical
+        function y(val) {
+            return val + paddingVertical
         }
 
-        console.log(columnWidth, columnHeight, doc.getFontList())
-        
+        // console.log(columnWidth, columnHeight, doc.getFontList())
+
         doc.setFont('helvetica')
         doc.setFontSize(70)
-        doc.text(parseInt(width/2), y(0), 'okru', {align:'center'})
+        doc.text(parseInt(width / 2), y(0), 'okru', { align: 'center' })
         doc.setTextColor('#999')
         doc.setFontSize(15)
         doc.setFont('courier')
-        doc.text(parseInt(width/2), y(10), user+'/2020/Q1', {align:'center'})
+        doc.text(parseInt(width / 2), y(10), user + '/2020/Q1', { align: 'center' })
         doc.setFont('helvetica')
         doc.setTextColor('#000')
-        
+
         doc.setFontStyle('bold')
         doc.setFontSize(10)
-        doc.text(17, y(60), 'OBJECTIVES', {rotationDirection:1, angle: 90, charSpace: 2})
-        doc.text(17, y(140), 'KEY RESULTS', {rotationDirection:1, angle: 90, charSpace: 2})
+        doc.text(17, y(60), 'OBJECTIVES', { rotationDirection: 1, angle: 90, charSpace: 2 })
+        doc.text(17, y(140), 'KEY RESULTS', { rotationDirection: 1, angle: 90, charSpace: 2 })
         doc.setDrawColor('#aaa')
         doc.setFontSize(7)
         doc.setFont('courier')
-        doc.text(width-80, height-2, ('https://okru.app/?user='+user), {charSpace: 0})
-        
+        doc.text(width - 80, height - 2, ('https://okru.app/?user=' + user), { charSpace: 0 })
 
-        okrs.forEach((okr,i)=>{
+
+        okrs.forEach((okr, i) => {
             let line = 25
             let step = 5
-            
+
             doc.setTextColor('#fff')
             doc.setFont('helvetica')
             doc.setDrawColor('#000')
             doc.setFontSize(15)
-            doc.roundedRect(x(i*(columnWidth+gutter)), y(15), columnWidth, columnHeight, 3, 3, 'S')
+            doc.roundedRect(x(i * (columnWidth + gutter)), y(15), columnWidth, columnHeight, 3, 3, 'S')
             doc.setFillColor('#333')
-            doc.roundedRect(x(i*(columnWidth+gutter)), y(15), columnWidth, 50, 3, 3, 'F')
+            doc.roundedRect(x(i * (columnWidth + gutter)), y(15), columnWidth, 50, 3, 3, 'F')
             doc.setFontStyle('bold')
-            var splitTitle = doc.splitTextToSize(okr.title, columnWidth-2*columnPad);
+            var splitTitle = doc.splitTextToSize(okr.title, columnWidth - 2 * columnPad);
             for (var j = 0; j < splitTitle.length; j++) {
 
-                doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
-                line=line+step
+                doc.text(x(i * (columnWidth + gutter) + columnWidth / 2), y(line), splitTitle[j], { align: 'center', charSpace: 0 });
+                line = line + step
             }
             doc.setFontStyle('normal')
             doc.setFontSize(10)
-            var splitTitle = doc.splitTextToSize(okr.description, columnWidth-2*columnPad);
+            var splitTitle = doc.splitTextToSize(okr.description, columnWidth - 2 * columnPad);
             for (var j = 0; j < splitTitle.length; j++) {
 
-                doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
-                line=line+step
+                doc.text(x(i * (columnWidth + gutter) + columnWidth / 2), y(line), splitTitle[j], { align: 'center', charSpace: 0 });
+                line = line + step
             }
             line = 75;
             doc.setTextColor('#000')
-            okr.keyResults.forEach((kr)=>{
-                var splitTitle = doc.splitTextToSize((kr.result+' [System Metric : '+kr.metric+'] '), columnWidth-2*columnPad);
+            okr.keyResults.forEach((kr) => {
+                var splitTitle = doc.splitTextToSize((kr.result + ' [System Metric : ' + kr.metric + '] '), columnWidth - 2 * columnPad);
                 for (var j = 0; j < splitTitle.length; j++) {
 
-                    doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
-                    line=line+step
+                    doc.text(x(i * (columnWidth + gutter) + columnWidth / 2), y(line), splitTitle[j], { align: 'center', charSpace: 0 });
+                    line = line + step
                 }
                 doc.setDrawColor('#aaa')
-                doc.line(x(i*(columnWidth+gutter)+columnPad),y(line),x(i*(columnWidth+gutter)+columnWidth-columnPad),y(line),'F')
-                line = line+8;
+                doc.line(x(i * (columnWidth + gutter) + columnPad), y(line), x(i * (columnWidth + gutter) + columnWidth - columnPad), y(line), 'F')
+                line = line + 8;
             });
-            var splitTitle = doc.splitTextToSize(('Possible Failure Mode : '+okr.failureMode), columnWidth-2*columnPad);
+            var splitTitle = doc.splitTextToSize(('Possible Failure Mode : ' + okr.failureMode), columnWidth - 2 * columnPad);
             for (var j = 0; j < splitTitle.length; j++) {
 
-                doc.text(x(i*(columnWidth+gutter) + columnWidth/2), y(line),splitTitle[j], {align:'center', charSpace: 0});
-                line=line+step
+                doc.text(x(i * (columnWidth + gutter) + columnWidth / 2), y(line), splitTitle[j], { align: 'center', charSpace: 0 });
+                line = line + step
             }
-            
-            
+
+
 
         })
-        
+
         // Save the Data
         doc.save('okru.pdf')
-        
+
         // var string = doc.output('datauristring');
         // var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
         // var x = window.open();
@@ -265,34 +283,65 @@ class Okrs extends React.Component {
         // x.document.write(iframe);
         // x.document.close();
 
+
+
+
+
+    }
+
+    findWeeksinQuarter = (q,y) =>{
+        let jan1 = new Date(y,0,1)
+        let d1,d2;
+        if (q==='Q1'){
+            d1 = new Date(y,0,1)
+            d2 = new Date(y,2,31)
+        }
+        else if (q==='Q2'){
+            d1 = new Date(y,3,1)
+            d2 = new Date(y,5,30)
+        }
+        else if (q==='Q3'){
+            d1 = new Date(y,6,1)
+            d2 = new Date(y,8,30)
+        }
+        else if (q==='Q4'){
+            d1 = new Date(y,9,1)
+            d2 = new Date(y,11,31)
+        }
+
+        let w1 = Math.ceil(((d1 - jan1 + 86400000)/86400000)/7);
+        let w2 = Math.ceil(((d2 - jan1 + 86400000)/86400000)/7)
+
+        return (w2-w1+1);
         
-
-  
-
     }
 
 
     render() {
-        const { classes, okrList, handleOpenDialog, selfView, isSignedIn, userBeingViewed, isFollowing, handleFollow } = this.props;
+        const { classes, okrList, handleOpenDialog, selfView, isSignedIn, userBeingViewed, isFollowing, handleFollow, quarter, year } = this.props;
         // console.log('in okr component',okrList);
         const followText = (isFollowing ? <Typography variant="caption">Unfollow</Typography>
             : <Typography variant="caption">Follow</Typography>)
+
+        let weeks = this.findWeeksinQuarter(quarter,year);
+        
+
 
         return (
             <Paper className={classes.root} elevation={0}>
                 <Grid container direction="row" justify="space-between" alignItems="center">
                     <Breadcrumbs className={classes.brumb} aria-label="breadcrumb">
                         <Typography color="inherit">{userBeingViewed}</Typography>
-                        <Typography color="inherit">2020</Typography>
-                        <Typography color="textPrimary">Q1</Typography>
+                        <Typography color="inherit">{year}</Typography>
+                        <Typography color="textPrimary">{quarter}</Typography>
                     </Breadcrumbs>
 
-                    {selfView && isSignedIn ? 
-                    <Fab color="primary" aria-label="add" size="small" className={classes.edit} onClick={()=>this.printOKR(okrList, userBeingViewed)}>
+                    {selfView && isSignedIn ?
 
-                        <PrintIcon fontSize="small" />
-                    </Fab>
-                      : (isSignedIn && okrList.length > 0 ? <Box className={classes.followBox}><Switch
+                        <Fab color="primary" aria-label="add" size="small" className={classes.edit} onClick={() => this.printOKR(okrList, userBeingViewed)}>
+                            <PrintIcon fontSize="small" />
+                        </Fab>
+                        : (isSignedIn && okrList.length > 0 ? <Box className={classes.followBox}><Switch
                             checked={isFollowing}
                             onChange={handleFollow}
                             value="follow"
@@ -330,13 +379,27 @@ class Okrs extends React.Component {
                         <List>
 
                             {okr.keyResults.map((kr, i) => (
-                                <ListItem key={i}>
-                                    <ListItemAvatar>
+                                <ListItem key={i} className={classes.kr}>
+                                    {/* <ListItemAvatar>
                                         <Avatar variant="rounded" className={classes.darkBackground}>
                                             <TrendingUpIcon />
                                         </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary={kr.result} secondary={"System Metric : " + kr.metric} />
+                                    </ListItemAvatar> 
+
+                                    <ListItemText primary={kr.result} secondary={"System Metric : " + kr.metric} className={classes.kr}/>
+                                    */}
+                                    <Grid container direction="column" justify="center" alignItems="flex-start">
+                                    <Typography>{kr.result}</Typography>
+                                    <Chip
+                                        icon={<SpeedIcon />}
+                                        label={<Typography variant="overline">System Metric : <Typography variant="button">{kr.metric}</Typography></Typography>}                                   
+                                        size="small"
+                                        // variant="outlined"
+                                    />
+
+                                    </Grid>
+                                    
+                                    
                                 </ListItem>
                             ))}
                         </List>
@@ -358,7 +421,7 @@ class Okrs extends React.Component {
                 </ExpansionPanel>))) :
                     <Typography>No OKRs yet!</Typography>
                 }
-                {selfView && isSignedIn ? <Grid container direction="column" alignItems="center" justify="center">
+                {selfView && isSignedIn ? <Grid container direction="column" alignItems="center" justify="center" className={classes.homeAdd}>
                     <Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>
 
                         <AddIcon />

@@ -22,7 +22,7 @@ const styles = theme => ({
     },
     jumbo: {
         fontWeight: 600,
-        cursor:'pointer'
+        cursor: 'pointer'
     },
     dark: {
         background: '#333'
@@ -56,7 +56,7 @@ class HomeScreen extends React.Component {
 
         this.state = {
             isSignedIn: false,
-            loggedInUser : null,
+            loggedInUser: null,
             showDialog: false,
             showDialogContent: null,
             curUserOKRs: [],
@@ -64,10 +64,15 @@ class HomeScreen extends React.Component {
             userlist: [],
             followlist: {},
             isFollowing: false,
-            userRequested : new URLSearchParams(window.location.search).get('user'),
-            userBeingViewed : new URLSearchParams(window.location.search).get('user'),
+            userRequested: new URLSearchParams(window.location.search).get('user'),
+            userBeingViewed: new URLSearchParams(window.location.search).get('user'),
+            quarter:'Q1',
+            year:'2020',
             ...dummyData
         }
+
+        
+          
 
 
 
@@ -79,27 +84,28 @@ class HomeScreen extends React.Component {
     }
 
     signOut() {
-        this.setState({isSignedIn:false})
+        this.setState({ isSignedIn: false })
         firebase.auth().signOut();
     }
 
     handleFollow = (event) => {
-        if(!this.state.isFollowing){
-            this.setState({isFollowing:!this.state.isFollowing});
-            const newFollowRef = firebase.database().ref('userlist/'+this.state.user.uid).push();
+        if (!this.state.isFollowing) {
+            this.setState({ isFollowing: !this.state.isFollowing });
+            const newFollowRef = firebase.database().ref(this.deployment+'/userlist/' + this.state.user.uid).push();
             newFollowRef.set(this.state.userBeingViewed);
         }
-        else{
-            this.setState({isFollowing:!this.state.isFollowing});
-            
-            const followID = Object.keys(this.state.followlist).filter(d=>{
-                console.log(d,this.state.followlist[d]);
-                return this.state.followlist[d]==this.state.userBeingViewed}
-                )
-            firebase.database().ref('userlist/'+this.state.user.uid+'/'+followID).remove()
-            
+        else {
+            this.setState({ isFollowing: !this.state.isFollowing });
+
+            const followID = Object.keys(this.state.followlist).filter(d => {
+                // console.log(d, this.state.followlist[d]);
+                return this.state.followlist[d] == this.state.userBeingViewed
+            }
+            )
+            firebase.database().ref(this.deployment+'/userlist/' + this.state.user.uid + '/' + followID).remove()
+
         }
-        
+
     }
 
 
@@ -109,26 +115,37 @@ class HomeScreen extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
+        if (process.env.NODE_ENV !== 'production') {
+            this.deployment = 'dev';
+        }
+        else{
+            this.deployment = 'prod';
+        }
 
         firebase.auth().onAuthStateChanged(user => {
             if (user !== null) {
-                console.log(user);
+                // console.log(user);
                 this.setState({ isSignedIn: !!user })
                 if (this._isMounted) {
                     this.setState({ user });
-                    // console.log(this.state);
-                    const usersRef = firebase.database().ref('users')
+                    console.log(this.deployment);
+                    
+
+                    
+
+                    
+                    const usersRef = firebase.database().ref(this.deployment+'/users')
 
 
                     const userID = user.email.split('@')[0].replace('.', '');
-                    this.setState({ loggedInUser:userID });
-                    
+                    this.setState({ loggedInUser: userID });
+
 
                     usersRef.child(user.uid).once('value', (snapshot) => {
-
+                        
 
                         if (snapshot.exists()) {
-                            console.log('user_exists');
+                            // console.log('user_exists');
                         }
                         else {
                             const userToStore = {
@@ -137,83 +154,83 @@ class HomeScreen extends React.Component {
                                 photoURL: user.photoURL,
                                 email: user.email,
                                 uid: user.uid,
-                                userID : userID
+                                userID: userID
                             }
-                            firebase.database().ref('users/' + user.uid).set(userToStore);
-                            const newUserRef = firebase.database().ref('userlist/all/'+user.uid);
+                            firebase.database().ref(this.deployment+'/users/' + user.uid).set(userToStore);
+                            const newUserRef = firebase.database().ref(this.deployment+'/userlist/all/' + user.uid);
                             newUserRef.set(userID);
 
 
                         }
-                        const curUser = firebase.database().ref('users/' + user.uid);
-                        console.log('users/' + user.uid);
+                        const curUser = firebase.database().ref(this.deployment+'/users/' + user.uid);
+                        // console.log('users/' + user.uid);
                         curUser.on('value', (snapshot) => {
                             this.setState({ 'curUser': snapshot.val() }, () => {
-                                console.log('user-state-updated!', snapshot.val(), this.state);
+                                // console.log('user-state-updated!', snapshot.val(), this.state);
 
-                                
-                                if(this.state.userRequested===null){
-                                    this.setState({selfView:true});
-                                    this.setState({userBeingViewed:userID});
-                                    firebase.database().ref('okrs').child(user.uid).once('value', (snapshot) => {
-                                        if(snapshot.val()!==null){
+
+                                if (this.state.userRequested === null) {
+                                    this.setState({ selfView: true });
+                                    this.setState({ userBeingViewed: userID });
+                                    firebase.database().ref(this.deployment+'/okrs').child(user.uid).once('value', (snapshot) => {
+                                        if (snapshot.val() !== null) {
                                             this.setState({ 'curUserOKRs': snapshot.val() }, () => {
-                                                console.log('user-okrs-updated!', snapshot.val(), this.state);
+                                                // console.log('user-okrs-updated!', snapshot.val(), this.state);
                                             });
                                         }
-                                        
+
                                     })
                                 }
-                                else{
-                                    firebase.database().ref('userlist/all').once('value', (d) => {
+                                else {
+                                    firebase.database().ref(this.deployment+'/userlist/all').once('value', (d) => {
                                         const dd = d.val();
                                         const userX = Object.keys(dd).find(key => dd[key] === this.state.userRequested);
-                                        
-                                        if (userX!==undefined&&userX!==null){
-                                            firebase.database().ref('okrs').child(userX).once('value', (snapshot) => {
-                                                if(this.state.userRequested === userID){
-                                                    this.setState({selfView:true});
+
+                                        if (userX !== undefined && userX !== null) {
+                                            firebase.database().ref(this.deployment+'/okrs').child(userX).once('value', (snapshot) => {
+                                                if (this.state.userRequested === userID) {
+                                                    this.setState({ selfView: true });
                                                 }
-                                                else{
-                                                    this.setState({selfView:false});
+                                                else {
+                                                    this.setState({ selfView: false });
                                                 }
-                                                if(snapshot.val()!==null){
+                                                if (snapshot.val() !== null) {
                                                     this.setState({ 'curUserOKRs': snapshot.val() }, () => {
-                                                        console.log('user-okrs-updated!', snapshot.val(), this.state);
+                                                        // console.log('user-okrs-updated!', snapshot.val(), this.state);
                                                     });
                                                 }
-                                                
+
                                             })
                                         }
-                                        
+
                                     })
                                 }
-                                
 
-                                firebase.database().ref('userlist/'+user.uid).on('value', (snapshot) => {
-                                    if(snapshot.val()!==null){
+
+                                firebase.database().ref(this.deployment+'/userlist/' + user.uid).on('value', (snapshot) => {
+                                    if (snapshot.val() !== null) {
                                         this.setState({ followlist: snapshot.val() }, () => {
-                                        console.log('follow-list-updated!', snapshot.val());
+                                            // console.log('follow-list-updated!', snapshot.val());
                                         });
-                                        if(Object.values(snapshot.val()).indexOf(this.state.userBeingViewed)>=0){
-                                            this.setState({isFollowing:true});
+                                        if (Object.values(snapshot.val()).indexOf(this.state.userBeingViewed) >= 0) {
+                                            this.setState({ isFollowing: true });
                                         }
                                     }
-                                    else{
+                                    else {
                                         this.setState({ followlist: {} })
                                     }
                                 })
-                                
-                                
+
+
                             });
                         });
                     })
 
 
-                    // const tempDataLoader = firebase.database().ref('okrs/temp');
+                    // const tempDataLoader = firebase.database().ref(this.deployment+'/okrs/temp');
                     // tempDataLoader.set(dummyData.okrList);
 
-                    
+
 
 
 
@@ -222,38 +239,38 @@ class HomeScreen extends React.Component {
 
         })
 
-        if(!this.state.isSignedIn&&this.state.userRequested!==null){
-            firebase.database().ref('userlist/all').once('value', (d) => {
+        if (!this.state.isSignedIn && this.state.userRequested !== null) {
+            firebase.database().ref(this.deployment+'/userlist/all').once('value', (d) => {
                 const dd = d.val();
                 const userX = Object.keys(dd).find(key => {
                     return dd[key] === this.state.userRequested;
                 });
-                
-                if (userX!==undefined&&userX!==null){
-                                        
-                    firebase.database().ref('okrs').child(userX).once('value', (snapshot) => {
-                        this.setState({selfView:false});
-                        if(snapshot.val()!==null){
+
+                if (userX !== undefined && userX !== null) {
+
+                    firebase.database().ref(this.deployment+'/okrs').child(userX).once('value', (snapshot) => {
+                        this.setState({ selfView: false });
+                        if (snapshot.val() !== null) {
                             this.setState({ 'curUserOKRs': snapshot.val() }, () => {
-                                console.log('user-okrs-updated!', snapshot.val(), this.state);
+                                // console.log('user-okrs-updated!', snapshot.val(), this.state);
                             });
                         }
-                        
+
                     })
                 }
             })
-    
+
         }
 
-        firebase.database().ref('userlist/all').once('value', (snapshot) => {
-            if(snapshot.val()!==null){
-            this.setState({ userlist: Object.values(snapshot.val()) }, () => {
-                console.log('user-list-updated!', Object.values(snapshot.val()));
-            });
+        firebase.database().ref(this.deployment+'/userlist/all').once('value', (snapshot) => {
+            if (snapshot.val() !== null) {
+                this.setState({ userlist: Object.values(snapshot.val()) }, () => {
+                    // console.log('user-list-updated!', Object.values(snapshot.val()));
+                });
             }
         })
 
-        
+
 
 
 
@@ -261,7 +278,7 @@ class HomeScreen extends React.Component {
 
 
     handleCloseDialog = (flag, objective, keyResults) => {
-        console.log('closed! NEW', objective, keyResults);
+        // console.log('closed! NEW', objective, keyResults);
         const showDialogContent = this.state.showDialogContent;
         const okrItem = {
             id: objective.id,
@@ -300,8 +317,8 @@ class HomeScreen extends React.Component {
         });
 
 
-        firebase.database().ref('okrs/'+this.state.user.uid).set({
-        ...newOKRList
+        firebase.database().ref(this.deployment+'/okrs/' + this.state.user.uid).set({
+            ...newOKRList
         });
 
     };
@@ -335,25 +352,25 @@ class HomeScreen extends React.Component {
         // console.log(this.state);
         const { classes, theme } = this.props;
 
-        console.log('fresh hell :(',this.state);
+        // console.log('fresh hell :(', this.state);
         return (
 
             <div className={classes.root}>
-                {(this.state.isSignedIn || this.state.userRequested!==null)?
+                {(this.state.isSignedIn || this.state.userRequested !== null) ?
                     (<Grid container direction="column">
                         {/* <Grid container justify="flex-end" direction="row" className={classes.dark}> */}
-                        {this.state.user&&this.state.isSignedIn?
-                        (this.state.user.photoURL?<Avatar className={classes.accountButton}  alt="Remy Sharp" src={this.state.user.photoURL} onClick={this.navHandleClick}/>
-                        :
-                        <AccountCircleIcon aria-controls="simple-menu" aria-haspopup="true" onClick={this.navHandleClick}
-                            className={classes.accountButton} fontSize="large">
+                        {this.state.user && this.state.isSignedIn ?
+                            (this.state.user.photoURL ? <Avatar className={classes.accountButton} alt="Remy Sharp" src={this.state.user.photoURL} onClick={this.navHandleClick} />
+                                :
+                                <AccountCircleIcon aria-controls="simple-menu" aria-haspopup="true" onClick={this.navHandleClick}
+                                    className={classes.accountButton} fontSize="large">
 
-                        </AccountCircleIcon>)
-                        :
-                        <AccountCircleIcon aria-controls="simple-menu" aria-haspopup="true" onClick={this.navHandleClick}
-                            className={classes.accountButton} fontSize="large">
+                                </AccountCircleIcon>)
+                            :
+                            <AccountCircleIcon aria-controls="simple-menu" aria-haspopup="true" onClick={this.navHandleClick}
+                                className={classes.accountButton} fontSize="large">
 
-                        </AccountCircleIcon>}
+                            </AccountCircleIcon>}
                         <Menu
                             id="simple-menu"
                             anchorEl={this.state.anchorEl}
@@ -361,9 +378,10 @@ class HomeScreen extends React.Component {
                             open={Boolean(this.state.anchorEl)}
                             onClose={this.navHandleClose}
                         >
-                            {!this.state.isSignedIn ? <MenuItem onClick={this.navSignin}>Login</MenuItem> : <MenuItem onClick={()=>{console.log('logged out!');
-                            this.signOut();
-                            this.setState({isSignedIn:false});
+                            {!this.state.isSignedIn ? <MenuItem onClick={this.navSignin}>Login</MenuItem> : <MenuItem onClick={() => {
+                                console.log('logged out!');
+                                this.signOut();
+                                this.setState({ isSignedIn: false });
                             }}>Logout</MenuItem>}
                         </Menu>
                         {/* </Grid> */}
@@ -381,10 +399,16 @@ class HomeScreen extends React.Component {
                         <Grid container item spacing={3} direction="row" justify="center" xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Grid container item spacing={3} xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
                             <Grid container item spacing={3} direction="column" xs={12} sm={12} md={7} lg={7} xl={7}>
-                                <Okrs okrList={this.state.curUserOKRs} handleOpenDialog={this.handleOpenDialog} 
-                                selfView={this.state.selfView} isFollowing={this.state.isFollowing}
-                                userBeingViewed={this.state.userBeingViewed} handleFollow={this.handleFollow}
-                                isSignedIn={this.state.isSignedIn}></Okrs>
+                                <Okrs 
+                                okrList={this.state.curUserOKRs}
+                                handleOpenDialog={this.handleOpenDialog}
+                                selfView={this.state.selfView}
+                                isFollowing={this.state.isFollowing}
+                                userBeingViewed={this.state.userBeingViewed}
+                                handleFollow={this.handleFollow}
+                                isSignedIn={this.state.isSignedIn}
+                                quarter={this.state.quarter}
+                                year = {this.state.year}></Okrs>
                             </Grid>
                             <Grid container item spacing={3} direction="column" xs={12} sm={12} md={3} lg={3} xl={3}>
                                 <Grid item >
@@ -392,17 +416,26 @@ class HomeScreen extends React.Component {
                                     <FollowingTable following={this.state.userlist} name="All Users" initText="Loading Users..." />
 
                                 </Grid>
-                                {this.state.isSignedIn?<Grid item >
+                                {this.state.isSignedIn ?
+                                    <Grid>
+                                        <Grid item >
 
-                                <FollowingTable following={Object.values(this.state.followlist)} name="Following List" initText="You're not following anyone!"/>
+                                            <FollowingTable following={Object.values(this.state.followlist)} name="Following" initText="You're not following anyone!" />
 
-                            </Grid> : ''}
+                                        </Grid>
+                                        <Grid item >
+
+                                            <FollowingTable following={Object.values(this.state.followlist)} name="Followers" initText="You do not have any followers yet!" />
+
+                                        </Grid>
+                                    </Grid>
+                                    : ''}
                             </Grid>
                             <Grid container item spacing={3} xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
 
                         </Grid>
-                        {this.state.selfView?<Edit openDialog={this.state.showDialog} handleCloseDialog={this.handleCloseDialog} showOKR={this.state.dialogContent} />:''}
-                        
+                        {this.state.selfView ? <Edit openDialog={this.state.showDialog} handleCloseDialog={this.handleCloseDialog} showOKR={this.state.dialogContent} /> : ''}
+
                     </Grid>
 
                     )
@@ -429,7 +462,7 @@ class HomeScreen extends React.Component {
                                 <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/?user=vivekaithal44')}>See a sample OKR</Button>
                             </Grid>
 
-                            
+
                         </div>
                     )
                 }

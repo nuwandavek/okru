@@ -168,7 +168,7 @@ class Edit extends React.Component {
                 keyResults: newKR
             }
             return temp
-        }, console.log(this.state));
+        });
 
     };
 

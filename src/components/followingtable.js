@@ -2,12 +2,15 @@ import React from 'react';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { withStyles } from '@material-ui/core/styles';
-import { Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Link } from '@material-ui/core';
+import {
+    Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    TablePagination, Link, TextField, Grid
+} from '@material-ui/core';
 
 
 const styles = theme => ({
     root: {
-        minHeight: '200px',
+        maxHeight: '220px',
         // overflow: 'scroll'
         textAlign: 'center'
     },
@@ -19,10 +22,16 @@ const styles = theme => ({
         justifyContent: "center",
         alignItems: "center"
     },
-    dark:{
+    dark: {
         background: "#333",
         color: "#fff",
         fontWeight: 800
+    },
+    search:{
+        color:'#fff',
+        // paddingLeft: '10px',
+        background: '#222',
+        borderRadius : '3px'
     }
 });
 
@@ -34,7 +43,10 @@ class FollowingTable extends React.Component {
         super(props);
         this.state = {
             page: 0,
-            rowsPerPage: 5
+            rowsPerPage: 5,
+            searchValue : '',
+            following: [],
+            followingRaw: []
         }
 
         this.handleChangePage = this.handleChangePage.bind(this);
@@ -50,31 +62,63 @@ class FollowingTable extends React.Component {
     };
 
 
+    handleSearch = event => {
+        // console.log(event.target.value);
+        this.setState({ searchValue: event.target.value });
+        if(event.target.value===''){
+            this.setState({following: this.state.followingRaw});
+        }
+        else{
+            let tempFollow = this.state.followingRaw.filter(d=>d.includes(event.target.value));
+            this.setState({following: tempFollow});
+        }
+    };
+
+    componentWillReceiveProps({ following }) {
+        console.log(following);
+        this.setState({following:following, followingRaw:following});
+    }
+
     render() {
-        const { classes,following, name, initText } = this.props;
+        const { classes, following, name, initText } = this.props;
         // console.log(this.state);
+     
+        
         return (
             <Paper elevation={0}>
                 <TableContainer className={classes.root}>
                     <Table stickyHeader aria-label="simple table" size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell className={classes.dark}>{name}</TableCell>
+                                <TableCell className={classes.dark}  style={{borderRadius: "5px"}}>
+                                <Grid container direction="row" justify="space-between" alignItems="center">
+                                <Typography>{name}</Typography>
+                                    
+                                    <TextField id="standard-basic" variant="outlined" size="small" label="Search" className = {classes.search}
+                                    InputLabelProps={{style:{ color: "#fff", paddingLeft:"10px"}}} 
+                                    InputProps={{style:{ color: "#fff"}}}
+                                    value={this.state.searchValue}
+                                    onChange={this.handleSearch}
+                                    />
                                 
+                                </Grid>
+                                    
+                                </TableCell>
+
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {(following.length === 0 ?
+                            {(this.state.following.length === 0 ?
                                 <TableRow><TableCell align="center" component="th" scope="row">
-                                <Typography>{initText}</Typography>
+                                    <Typography>{initText}</Typography>
                                 </TableCell>
                                 </TableRow>
                                 :
-                                (following.slice(this.state.page * this.state.rowsPerPage, (this.state.page + 1) * this.state.rowsPerPage).map(row => (
+                                (this.state.following.slice(this.state.page * this.state.rowsPerPage, (this.state.page + 1) * this.state.rowsPerPage).map(row => (
                                     <TableRow key={row}>
-                                        
+
                                         <TableCell align="center" component="th" scope="row">
-                                            <Link color="inherit" href={"/?user="+row}>{row}</Link>
+                                            <Link color="inherit" href={"/?user=" + row}>{row}</Link>
                                         </TableCell>
                                     </TableRow>
                                 ))))}
@@ -84,7 +128,7 @@ class FollowingTable extends React.Component {
                 <TablePagination
                     rowsPerPageOptions={[5]}
                     component="div"
-                    count={following.length}
+                    count={this.state.following.length}
                     rowsPerPage={this.state.rowsPerPage}
                     page={this.state.page}
                     onChangePage={this.handleChangePage}

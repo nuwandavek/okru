@@ -9,14 +9,20 @@ Checkout the issues and the kanban for this project!
 - Add/edit OKRs (Os, KRs, failure modes, categories)
 - Google login
 - Follow people
+- Printable OKRs
 
 
 ## Features : To Be Added
 - Search by user id
-- Printable OKRs
 - Update progress on OKRs
 - Mail cues for updates and aggregate updates of people you're following
 
 ```
 For any feedback, comments or discussion, you can reach out to me at vivekaithal44[at]gmail[dot]com
 ```
+
+## How to Develop Locally
+- Pull repo; `npm install`
+- `yarn start` to develop
+- `yarn build` to build
+- push to master; Github Actions will push to gh-pages
