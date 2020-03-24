@@ -18,6 +18,7 @@ import AddIcon from '@material-ui/icons/Add';
 import PrintIcon from '@material-ui/icons/Print';
 import SpeedIcon from '@material-ui/icons/Speed';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import FiberManualRecordOutlinedIcon from '@material-ui/icons/FiberManualRecordOutlined';
 
 import {
     Paper, Grid, Typography, ListItem, Button,
@@ -110,6 +111,11 @@ const styles = theme => ({
         borderLeft: "5px #000 solid",
         paddingLeft: "20px",
         marginBottom: "10px"
+    },
+    bubbles:{
+        flex:0,
+        paddingRight: "10px",
+        paddingTop: "10px"
     }
 });
 
@@ -170,6 +176,7 @@ class Okrs extends React.Component {
         }
         this.printOKR = this.printOKR.bind(this);
         this.findWeeksinQuarter = this.findWeeksinQuarter.bind(this);
+        // this.updateProgressBubble = this.updateProgressBubble.bind(this);
 
 
     }
@@ -289,6 +296,7 @@ class Okrs extends React.Component {
 
     }
 
+
     findWeeksinQuarter = (q,y) =>{
         let jan1 = new Date(y,0,1)
         let d1,d2;
@@ -318,12 +326,15 @@ class Okrs extends React.Component {
 
 
     render() {
-        const { classes, okrList, handleOpenDialog, selfView, isSignedIn, userBeingViewed, isFollowing, handleFollow, quarter, year } = this.props;
+        const { classes, okrList, handleOpenDialog, selfView, isSignedIn, userBeingViewed, isFollowing, handleFollow, quarter, year, updateProgress } = this.props;
         // console.log('in okr component',okrList);
+        // this.setState({okrList});
         const followText = (isFollowing ? <Typography variant="caption">Unfollow</Typography>
             : <Typography variant="caption">Follow</Typography>)
 
-        let weeks = this.findWeeksinQuarter(quarter,year);
+        // let weeks = new Array(this.findWeeksinQuarter(quarter,year)).fill(-1);
+        
+        // console.log(weeks);
         
 
 
@@ -352,7 +363,7 @@ class Okrs extends React.Component {
                         />{followText}</Box> : '')}
 
                 </Grid>
-                {okrList.length > 0 ? (okrList.map((okr) => (<ExpansionPanel key={okr.id} elevation={0}>
+                {okrList.length > 0 ? (okrList.map((okr,k) => (<ExpansionPanel key={okr.id} elevation={0}>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={"panel-" + okr.id + "-content"}
@@ -396,6 +407,36 @@ class Okrs extends React.Component {
                                         size="small"
                                         // variant="outlined"
                                     />
+                                    <Grid container direction="row">
+                                        {   
+                                            kr.progress.map((d,j)=>{
+                                                let weekLabel = <Typography variant="caption">{'W'+(j+1)}</Typography>;
+                                                let circleColor;
+                                                if(d===0) {
+                                                    return (
+                                                        <Grid container direction="column" key={k*100 + i * 10 + j} className={classes.bubbles} alignItems="center">
+                                                            
+                                                            <FiberManualRecordOutlinedIcon onClick={()=>updateProgress(k,i,j)}  fontSize="small"  key={k*100 + i * 10 + j} style={{color:'#bdc3c7'}}/>
+                                                            {weekLabel}
+                                                        </Grid>
+                                                    )
+                                                }
+                                                else if(d===1)  circleColor =  "#c0392b";
+                                                else if(d===2)  circleColor =  "#f1c40f";
+                                                else  circleColor =  "#27ae60";
+                                                let circle = <FiberManualRecordIcon 
+                                                onClick={()=>updateProgress(k,i,j)} 
+                                                fontSize="small"  key={k*100 + i * 10 + j} style={{color:circleColor}}/>
+                                                return (
+                                                    <Grid container direction="column"  key={k*100 + i * 10 + j} className={classes.bubbles} alignItems="center">
+                                                        
+                                                        {circle}
+                                                        {weekLabel}
+                                                    </Grid>
+                                                )
+                                            })
+                                        }
+                                    </Grid>
 
                                     </Grid>
                                     

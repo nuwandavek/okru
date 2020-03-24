@@ -81,6 +81,7 @@ class HomeScreen extends React.Component {
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
         this.handleFollow = this.handleFollow.bind(this);
         this.signOut = this.signOut.bind(this);
+        this.updateProgress = this.updateProgress.bind(this);
     }
 
     signOut() {
@@ -335,6 +336,54 @@ class HomeScreen extends React.Component {
         }
     };
 
+    updateProgress = (k,i,j) =>{
+        console.log('updateprogress',k,i,j);
+        let allOKRs = this.state.curUserOKRs;
+        let curOKR = allOKRs[k];
+        let curKR = curOKR.keyResults[i];
+
+
+        let newProgress = curKR.progress.map((p,q)=>{
+            if(q!==j){
+                return p;
+            }
+            else{
+                return (p+1)%4;
+            }
+        });
+
+        let newKRs = curOKR.keyResults.map((p,q)=>{
+            if(q!==i){
+                return p;
+            }
+            else{
+                return {
+                    ...curKR,
+                    progress: newProgress
+                };
+            }
+        })
+
+        let newAllOKRs = allOKRs.map((p,q)=>{
+            if(q!==k){
+                return p;
+            }
+            else{
+                return {
+                    ...curOKR,
+                    keyResults: newKRs
+                };
+            }
+        })
+
+        this.setState({curUserOKRs:newAllOKRs})
+
+        firebase.database().ref(this.deployment+'/okrs/' + this.state.user.uid).set({
+            ...newAllOKRs
+        });
+
+    }
+
     navHandleClick = event => {
         this.setState({ anchorEl: event.currentTarget });
     };
@@ -408,7 +457,9 @@ class HomeScreen extends React.Component {
                                 handleFollow={this.handleFollow}
                                 isSignedIn={this.state.isSignedIn}
                                 quarter={this.state.quarter}
-                                year = {this.state.year}></Okrs>
+                                year = {this.state.year}
+                                updateProgress = {this.updateProgress}>
+                                </Okrs>
                             </Grid>
                             <Grid container item spacing={3} direction="column" xs={12} sm={12} md={3} lg={3} xl={3}>
                                 <Grid item >
