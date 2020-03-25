@@ -122,7 +122,12 @@ const styles = theme => ({
     bubbles:{
         flex:0,
         paddingRight: "10px",
-        paddingTop: "10px"
+        paddingTop: "10px",
+        cursor: 'pointer'
+    },
+    progressGrid:{
+        height: "5px",
+        borderRadius: "5px"
     }
 });
 
@@ -332,6 +337,21 @@ class Okrs extends React.Component {
     }
 
 
+    findWidth = (okr,id) => {
+        let idCounts = [0,0,0,0];
+
+        okr.keyResults.map(d=>{
+            d.progress.map(f=>{
+                idCounts[f]+=1;
+            })
+        })
+
+        
+        return idCounts[id]*200/idCounts.reduce((a, v) => a + v);
+
+    }
+
+
     render() {
         const { classes, okrList, handleOpenDialog, selfView, isSignedIn, userBeingViewed, isFollowing, handleFollow, quarter, year, updateProgress } = this.props;
         // console.log('in okr component',okrList);
@@ -379,7 +399,17 @@ class Okrs extends React.Component {
                         <Box className={classes.col}>
                             <Box className={classes.heading}>
                                 {/* <EmojiObjectsOutlinedIcon fontSize="large" /> */}
-                                <Typography className={classes.bold}>{okr.title}</Typography>
+                                <Grid container direction="row">
+                                    <Typography className={classes.bold}>{okr.title}</Typography>
+                                    <Grid container direction="row">
+                                        
+                                        <Grid className={classes.progressGrid} style={{background:"#c0392b",width:this.findWidth(okr,1)}}></Grid>
+                                        <Grid className={classes.progressGrid} style={{background:"#f1c40f",width:this.findWidth(okr,2)}}></Grid>
+                                        <Grid className={classes.progressGrid} style={{background:"#27ae60",width:this.findWidth(okr,3)}}></Grid>
+                                        <Grid className={classes.progressGrid} style={{background:"#bdc3c7",width:this.findWidth(okr,0)}}></Grid>
+                                                
+                                    </Grid>
+                                </Grid>
                                 <Typography variant="body2" className={classes.description}>
                                     {okr.description}
                                 </Typography>
@@ -420,15 +450,7 @@ class Okrs extends React.Component {
                                             kr.progress.map((d,j)=>{
                                                 let weekLabel = <Typography variant="caption">{'W'+(j+1)}</Typography>;
                                                 let circleColor;
-                                                if(d===0) {
-                                                    return (
-                                                        <Grid container direction="column" key={k*100 + i * 10 + j} className={classes.bubbles} alignItems="center">
-                                                            
-                                                            <FiberManualRecordOutlinedIcon onClick={()=>updateProgress(k,i,j)}  fontSize="small"  key={k*100 + i * 10 + j} style={{color:'#bdc3c7'}}/>
-                                                            {weekLabel}
-                                                        </Grid>
-                                                    )
-                                                }
+                                                if(d===0) circleColor = "#bdc3c7";
                                                 else if(d===1)  circleColor =  "#c0392b";
                                                 else if(d===2)  circleColor =  "#f1c40f";
                                                 else  circleColor =  "#27ae60";
