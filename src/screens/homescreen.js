@@ -63,6 +63,7 @@ class HomeScreen extends React.Component {
             selfView: false,
             userlist: [],
             followlist: {},
+            followerslist: {},
             isFollowing: false,
             userRequested: new URLSearchParams(window.location.search).get('user'),
             userBeingViewed: new URLSearchParams(window.location.search).get('user'),
@@ -222,6 +223,35 @@ class HomeScreen extends React.Component {
                                     }
                                 })
 
+                                firebase.database().ref(this.deployment+'/userlist').once('value', (snapshot) => {
+                                    // console.log('alluserlist',snapshot.val());
+                                    let obj = snapshot.val();
+                                    let allUsers = obj.all;
+                                    let followers = {};
+                                    let followOpt;
+                                    if (obj !== null) {
+                                        followOpt = Object.keys(obj).filter(d=>{
+                                            if(d!=='all'){
+                                                let tempUserFollows = obj[d];
+                                                if(Object.values(tempUserFollows).includes(this.state.loggedInUser)){
+                                                    followers[d] = allUsers[d];
+                                                    return d;
+                                                }
+                                            }
+                                        })
+
+                                        this.setState({ followerslist: followers })
+
+                                        
+
+                                    }
+                                    else {
+                                        this.setState({ followerslist: {} })
+                                    }
+                                })
+
+
+
 
                             });
                         });
@@ -270,6 +300,13 @@ class HomeScreen extends React.Component {
                 });
             }
         })
+
+        // firebase.database().ref(this.deployment+'/userlist/').once('value', (snapshot) => {
+        //     console.log('alluserlist',snapshot.val());
+        //     if (snapshot.val() !== null) {
+        //         console.log('alluserlist',snapshot.val());
+        //     }
+        // })
 
 
 
@@ -476,7 +513,7 @@ class HomeScreen extends React.Component {
                                         </Grid>
                                         <Grid item >
 
-                                            <FollowingTable following={Object.values(this.state.followlist)} name="Followers" initText="You do not have any followers yet!" />
+                                            <FollowingTable following={Object.values(this.state.followerslist)} name="Followers" initText="You do not have any followers yet!" />
 
                                         </Grid>
                                     </Grid>

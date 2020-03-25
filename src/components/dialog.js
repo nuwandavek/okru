@@ -8,9 +8,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 
 import {
-    Typography, Button, Dialog, AppBar,Avatar, Fab,
+    Typography, Button, Dialog, AppBar, Avatar, Fab,
     Toolbar, IconButton, Grid, TextField, FormControl, InputLabel, Select, MenuItem
 } from '@material-ui/core';
+
+import TextFieldCharCount from '../components/textfieldcharcount'
 
 
 const styles = theme => ({
@@ -213,7 +215,7 @@ class Edit extends React.Component {
 
     render() {
 
-        const { classes,openDialog, handleCloseDialog } = this.props;
+        const { classes, openDialog, handleCloseDialog } = this.props;
         return (
             <Dialog fullScreen open={openDialog} onClose={() => handleCloseDialog('old', this.state.objective, this.state.keyResults)}>
                 <AppBar className={classes.appBar}>
@@ -237,7 +239,7 @@ class Edit extends React.Component {
 
                         <Grid item container direction="row" spacing={3} alignItems="center" justify="space-between">
                             <Grid item xs={8}>
-                                <TextField
+                                <TextFieldCharCount
                                     required
                                     id="outlined-required"
                                     label="Objective"
@@ -245,6 +247,9 @@ class Edit extends React.Component {
                                     value={this.state.objective.title}
                                     variant="outlined"
                                     fullWidth
+                                    inputProps={{
+                                        maxLength: 70,
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -271,7 +276,7 @@ class Edit extends React.Component {
 
 
                         </Grid>
-                        <TextField
+                        <TextFieldCharCount
                             required
                             id="outlined-required-decription"
                             label="Description"
@@ -281,18 +286,9 @@ class Edit extends React.Component {
                             fullWidth
                             multiline
                             rows={2}
-                        />
-                        <TextField
-                            required
-                            id="outlined-required-failure-mode"
-                            label="Possible Failure Mode"
-                            onChange={this.changeFailureMode}
-                            value={this.state.objective.failureMode}
-                            variant="outlined"
-                            className={classes.fail}
-                            fullWidth
-                            multiline
-                            rows={2}
+                            inputProps={{
+                                maxLength: 140,
+                            }}
                         />
                         <Typography variant="overline" className={classes.obj}>Key Results</Typography>
                         {
@@ -307,23 +303,30 @@ class Edit extends React.Component {
                                         </Grid>
 
                                         <Grid item xs={7}>
-                                            <TextField
+                                            <TextFieldCharCount
                                                 required
                                                 label="Key Result"
                                                 onChange={(e) => this.changeKRResult(e, kr.id)}
                                                 value={kr.result}
                                                 variant="outlined"
                                                 style={{ width: "100%" }}
+                                                fullWidth
+                                                inputProps={{
+                                                    maxLength: 140,
+                                                }}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
-                                            <TextField
+                                            <TextFieldCharCount
                                                 required
                                                 label="System Metric"
                                                 onChange={(e) => this.changeKRMetric(e, kr.id)}
                                                 value={kr.metric}
                                                 variant="outlined"
                                                 style={{ width: "100%" }}
+                                                inputProps={{
+                                                    maxLength: 3,
+                                                }}
                                             />
                                         </Grid>
                                         <Grid container justify="center" item xs={1}>
@@ -339,45 +342,60 @@ class Edit extends React.Component {
                                 )
                             })
                         }
-                        <Grid container direction="column"  alignItems="center" style={{margin:"20px"}}>
-                        <Grid container direction="column" alignItems="center" justify="center">
-                        <Fab color="primary" aria-label="add" className={classes.darkBackground}
-                            onClick={this.addKR}
-                        >
-                            <AddIcon />
-                        </Fab>
-                        <Typography variant="caption">Add New Key Result</Typography>
-                        </Grid>
 
-                        <Grid container direction="row" justify="space-evenly"  style={{paddingTop:"50px"}}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                className={classes.darkBackground}
-                                startIcon={<CloseIcon />}
-                                onClick={() => handleCloseDialog('old', this.state.objective, this.state.keyResults)}
-                            >
-                                Cancel
+                        <Grid container direction="column" alignItems="center" style={{ margin: "20px" }}>
+                            <Grid container direction="column" alignItems="center" justify="center">
+                                <Fab color="primary" aria-label="add" className={classes.darkBackground}
+                                    onClick={this.addKR}
+                                >
+                                    <AddIcon />
+                                </Fab>
+                                <Typography variant="caption">Add New Key Result</Typography>
+                            </Grid>
+                            <TextFieldCharCount
+                            required
+                            id="outlined-required-failure-mode"
+                            label="Possible Failure Mode"
+                            onChange={this.changeFailureMode}
+                            value={this.state.objective.failureMode}
+                            variant="outlined"
+                            className={classes.fail}
+                            fullWidth
+                            multiline
+                            rows={2}
+                            inputProps={{
+                                maxLength: 140,
+                            }}
+                        />
+                            <Grid container direction="row" justify="space-evenly" style={{ paddingTop: "50px" }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.darkBackground}
+                                    startIcon={<CloseIcon />}
+                                    onClick={() => handleCloseDialog('old', this.state.objective, this.state.keyResults)}
+                                >
+                                    Cancel
                             </Button>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                className={classes.darkBackground}
-                                startIcon={<DeleteIcon />}
-                                onClick={() => handleCloseDialog('delete', this.state.objective, this.state.keyResults)}
-                            >
-                                Delete
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.darkBackground}
+                                    startIcon={<DeleteIcon />}
+                                    onClick={() => handleCloseDialog('delete', this.state.objective, this.state.keyResults)}
+                                >
+                                    Delete
                             </Button>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                className={classes.darkBackground}
-                                startIcon={<SaveIcon />}
-                                onClick={() => handleCloseDialog('new', this.state.objective, this.state.keyResults)}
-                            >
-                                Save
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.darkBackground}
+                                    startIcon={<SaveIcon />}
+                                    onClick={() => handleCloseDialog('new', this.state.objective, this.state.keyResults)}
+                                >
+                                    Save
                             </Button>
-                        </Grid>
+                            </Grid>
                         </Grid>
 
                     </Grid>

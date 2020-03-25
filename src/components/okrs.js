@@ -82,6 +82,13 @@ const styles = theme => ({
         paddingBottom: "10px",
         textAlign: 'left'
     },
+    descriptionPFM:{
+        paddingBottom: "10px",
+        textAlign: 'left',
+        borderLeft: "5px #c0392b solid",
+        paddingLeft: "20px",
+        
+    },
     darkBackground: {
         background: "#333"
     },
@@ -403,9 +410,10 @@ class Okrs extends React.Component {
                                     <Typography>{kr.result}</Typography>
                                     <Chip
                                         icon={<SpeedIcon />}
-                                        label={<Typography variant="overline">System Metric : <Typography variant="button">{kr.metric}</Typography></Typography>}                                   
+                                        label={<Typography variant="caption">System Metric : <Typography variant="button">{kr.metric}</Typography></Typography>}                                   
                                         size="small"
-                                        // variant="outlined"
+                                        color="default"
+                                        variant="outlined"
                                     />
                                     <Grid container direction="row">
                                         {   
@@ -444,9 +452,19 @@ class Okrs extends React.Component {
                                 </ListItem>
                             ))}
                         </List>
-                        <Typography variant="body2" className={classes.description}>
-                            <b>Possible Failure Mode : </b>{okr.failureMode}
+                        
+                        {/* <Grid container direction="row">
+                            <Chip
+                                        label={<Typography variant="overline">Possible Failure Mode</Typography>}                                   
+                                        size="small"
+                                        color="secondary"
+                                        // variant="outlined"
+                                    /> */}
+                        <Typography variant="body2" className={classes.descriptionPFM}>
+                        <b>Possible Failure Mode : </b>
+                        {okr.failureMode}
                         </Typography>
+                        {/* </Grid> */}
                         <Grid container direction="row" justify="flex-end" style={{ width: '100%', display: "flex" }}>
                             {selfView && isSignedIn ? <Fab size="small" color="primary" aria-label="add" className={classes.edit}
                                 onClick={() => handleOpenDialog(okr.id)}>

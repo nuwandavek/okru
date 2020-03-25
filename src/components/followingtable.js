@@ -31,7 +31,8 @@ const styles = theme => ({
         color:'#fff',
         // paddingLeft: '10px',
         background: '#222',
-        borderRadius : '3px'
+        borderRadius : '3px',
+        width: "50%"
     }
 });
 
@@ -75,7 +76,7 @@ class FollowingTable extends React.Component {
     };
 
     componentWillReceiveProps({ following }) {
-        console.log(following);
+        // console.log(following);
         this.setState({following:following, followingRaw:following});
     }
 
