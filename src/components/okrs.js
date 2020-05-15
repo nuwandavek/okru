@@ -369,6 +369,7 @@ class Okrs extends React.Component {
             <Paper className={classes.root} elevation={0}>
                 <Grid container direction="row" justify="space-between" alignItems="center">
                     <Breadcrumbs className={classes.brumb} aria-label="breadcrumb">
+                        <Typography color="inherit">OKRs</Typography>
                         <Typography color="inherit">{userBeingViewed}</Typography>
                         <Typography color="inherit">{year}</Typography>
                         <Typography color="textPrimary">{quarter}</Typography>
@@ -379,7 +380,7 @@ class Okrs extends React.Component {
                         <Fab color="primary" aria-label="add" size="small" className={classes.edit} onClick={() => this.printOKR(okrList, userBeingViewed)}>
                             <PrintIcon fontSize="small" />
                         </Fab>
-                        : (isSignedIn && okrList.length > 0 ? <Box className={classes.followBox}><Switch
+                        : (isSignedIn ? <Box className={classes.followBox}><Switch
                             checked={isFollowing}
                             onChange={handleFollow}
                             value="follow"
@@ -443,7 +444,7 @@ class Okrs extends React.Component {
                                         label={<Typography variant="caption">System Metric : <Typography variant="button">{kr.metric}</Typography></Typography>}                                   
                                         size="small"
                                         color="default"
-                                        variant="outlined"
+                                        // variant="outlined"
                                     />
                                     <Grid container direction="row">
                                         {   

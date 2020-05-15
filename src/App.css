@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+.Mui-selected{
+  background: #333 !important;
+  color: #fff !important;
+}
