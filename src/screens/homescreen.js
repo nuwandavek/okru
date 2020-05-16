@@ -79,13 +79,15 @@ class HomeScreen extends React.Component {
 
 
         this.state = {
-            mode: 1,
+            anchorEl: null,
+            mode: props.mode,
             isSignedIn: false,
             showDialog: false,
             showDialogContent: null,
             curUserOKRs: [],
             curUser: {},
             userlist: [],
+            pommers: [],
             followlist: {},
             followerslist: {},
             poms: {},
@@ -105,7 +107,18 @@ class HomeScreen extends React.Component {
     }
 
     signOut() {
-        this.setState({ isSignedIn: false })
+        this.setState({ 
+            anchorEl: null,
+            isSignedIn: false,
+            curUserOKRs: [],
+            curUser: {},
+            // userlist: [],
+            followlist: {},
+            followerslist: {},
+            poms: {},
+            userRequested: null
+         })
+
         firebase.auth().signOut();
     }
 
@@ -274,6 +287,9 @@ class HomeScreen extends React.Component {
 
                 }
             }
+            else{
+                // window.location.href='/okrs';
+            }
 
         })
 
@@ -309,7 +325,7 @@ class HomeScreen extends React.Component {
         })
 
 
-        // Get all poms and remap to the nameids
+        // Get all pommers
         firebase.database().ref(this.deployment + '/userlist/all').once('value', (d) => {
             const dd = d.val();
             
@@ -318,13 +334,13 @@ class HomeScreen extends React.Component {
             firebase.database().ref(this.deployment + '/poms').child(queryDate)
             .once('value', (snapshot) => {
                 const pomIds = snapshot.val();
-                const pomProcessed = {}
+                const pommers = [];
                 if (pomIds !== null) {
                     
                     for (var key in pomIds){
-                        pomProcessed[dd[key]] = pomIds[key]
+                        pommers.push(dd[key]);
                     }
-                    this.setState({ poms: pomProcessed});
+                    this.setState({pommers});
                 }
             })
         })
@@ -452,7 +468,7 @@ class HomeScreen extends React.Component {
     };
 
     navSignin = () => {
-        window.location.href = '/'
+        window.location.href = '/okrs'
 
     };
 
@@ -487,10 +503,14 @@ class HomeScreen extends React.Component {
                             open={Boolean(this.state.anchorEl)}
                             onClose={this.navHandleClose}
                         >
-                            {!this.state.isSignedIn ? <MenuItem onClick={this.navSignin}>Login</MenuItem> : <MenuItem onClick={() => {
+                            {!this.state.isSignedIn ? <MenuItem onClick={this.navSignin}>Login</MenuItem> : 
+                            <MenuItem onClick={() => {
                                 console.log('logged out!');
-                                this.signOut();
-                                this.setState({ isSignedIn: false });
+                                
+                                this.setState({ isSignedIn: false },()=>{
+                                    this.signOut();
+                                    // window.location.href = '/okrs';
+                                });
                             }}>Logout</MenuItem>}
                         </Menu>
                         {/* </Grid> */}
@@ -530,6 +550,7 @@ class HomeScreen extends React.Component {
                                 <Grid item >
 
                                     <FollowingTable following={this.state.userlist} name="All Users" initText="Loading Users..." />
+                                    <FollowingTable following={this.state.pommers} name="All Pommers" initText="No Pommers Today!" />
 
                                 </Grid>
                                 {this.state.isSignedIn ?
@@ -552,12 +573,18 @@ class HomeScreen extends React.Component {
                         </Grid>
                         <BottomNavigation value={this.state.mode} onChange={(event, newValue) => {
                                 this.setState({mode:newValue})
+                                if(newValue===0){
+                                    window.location.href='/okrs';
+                                }
+                                else if(newValue===1){
+                                    window.location.href='/copom';
+                                }
                             }}
                             showLabels
                             className={classes.stickToBottom}
                         >
                             <BottomNavigationAction className={classes.edit} label="OKRs" icon={<FormatListBulletedIcon />} />
-                            <BottomNavigationAction className={classes.edit} label="CoPom" icon={<GroupWorkIcon />} />
+                            {this.state.isSignedIn?<BottomNavigationAction className={classes.edit} label="CoPom" icon={<GroupWorkIcon />} />:''}
                         </BottomNavigation>
 
                         {this.state.curUser.userID === this.state.userRequested ? <Edit openDialog={this.state.showDialog} handleCloseDialog={this.handleCloseDialog} showOKR={this.state.dialogContent} /> : ''}
@@ -588,7 +615,7 @@ class HomeScreen extends React.Component {
                     modes and follow your friends.</Typography>
 
                                 <Typography variant="overline">More features are coming soon!</Typography>
-                                <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/?user=vivekaithal44&q=1&y=2020')}>See a sample OKR</Button>
+                                <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/okrs?user=vivekaithal44&q=1&y=2020')}>See a sample OKR</Button>
                             </Grid>
 
 

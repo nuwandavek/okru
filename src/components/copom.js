@@ -182,6 +182,18 @@ class CoPom extends React.Component {
 
 
                     }
+                    else{
+                        this.setState({
+                            poms: [{
+                                pommer: user.userID,
+                                time: 0,
+                                status: '',
+                                text: '',
+                                poms: 0,
+                                self: true
+                            }]
+                        })
+                    }
                 })
         })
 
@@ -208,7 +220,7 @@ class CoPom extends React.Component {
         let newPoms = this.state.poms;
         newPoms[newPoms.length-1] = {
             pommer: this.state.user.userID,
-            poms: this.state.selfPomCount+1,
+            poms: this.state.selfPomCount,
             self: true,
             status: "inprogress",
             text: "",

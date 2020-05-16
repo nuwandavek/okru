@@ -91,7 +91,10 @@ class PomCard extends React.Component {
             <Grid md={3} item container className={`${classes.pomcards} ${pomData.self ? classes.outline : ""}`} 
             direction="column" justify="space-around" alignItems="center">
 
-                <Typography variant='overline'>{pomData.pommer}</Typography>
+                    <Link color="inherit" href={"/?user=" + pomData.pommer}>
+                        <Typography variant='overline'>{pomData.pommer}</Typography>
+                    </Link>
+                    {/* <Typography variant='overline'>{pomData.pommer}</Typography> */}
 
                 {
                     pomData.poms > 0 ? (
@@ -100,7 +103,7 @@ class PomCard extends React.Component {
                             {pomArray.map((f, j) => (<FiberManualRecordIcon key={j} className={classes.pomColor} />))}
                         </Grid>
                     ) : (
-                            <Typography variant='caption'>No Poms Today!</Typography>
+                            <Typography variant='caption'>No Completed Poms Today!</Typography>
                         )
                 }
 

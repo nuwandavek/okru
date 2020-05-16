@@ -27,17 +27,26 @@ class App extends React.Component {
   render() {
 
     if (this.state.currentPage === "/") {
+      window.location.href = "/okrs"
+      // return (
+      //   <MuiThemeProvider theme={theme}>
+      //     <HomeScreen mode={0}/>
+      //   </MuiThemeProvider>
+      // )
+    }
+
+    if (this.state.currentPage === "/okrs") {
       return (
         <MuiThemeProvider theme={theme}>
-          <HomeScreen />
+          <HomeScreen mode={0}/>
         </MuiThemeProvider>
       )
     }
 
-    else if (this.state.currentPage === "/account") {
+    else if (this.state.currentPage === "/copom") {
       return (
         <MuiThemeProvider theme={theme}>
-          <HomeScreen />
+          <HomeScreen mode={1}/>
         </MuiThemeProvider>
       )
     }
