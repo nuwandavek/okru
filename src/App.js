@@ -27,28 +27,22 @@ class App extends React.Component {
   render() {
 
     if (this.state.currentPage === "/") {
-      window.location.href = "/okrs"
-      // return (
-      //   <MuiThemeProvider theme={theme}>
-      //     <HomeScreen mode={0}/>
-      //   </MuiThemeProvider>
-      // )
-    }
-
-    if (this.state.currentPage === "/okrs") {
-      return (
-        <MuiThemeProvider theme={theme}>
-          <HomeScreen mode={0}/>
-        </MuiThemeProvider>
-      )
-    }
-
-    else if (this.state.currentPage === "/copom") {
-      return (
-        <MuiThemeProvider theme={theme}>
-          <HomeScreen mode={1}/>
-        </MuiThemeProvider>
-      )
+      let mode = new URLSearchParams(window.location.search).get('m') || 'okrs';
+      if (mode==='okrs'){
+        return (
+          <MuiThemeProvider theme={theme}>
+            <HomeScreen mode={0}/>
+          </MuiThemeProvider>
+        )
+      }
+      else if (mode==='copom'){
+        return (
+          <MuiThemeProvider theme={theme}>
+            <HomeScreen mode={1}/>
+          </MuiThemeProvider>
+        )
+      }
+      
     }
   }
 }

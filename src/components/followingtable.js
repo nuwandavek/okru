@@ -119,7 +119,7 @@ class FollowingTable extends React.Component {
                                     <TableRow key={row}>
 
                                         <TableCell align="center" component="th" scope="row">
-                                            <Link color="inherit" href={"/okrs?user=" + row}>{row}</Link>
+                                            <Link color="inherit" href={"/?m=okrs&user=" + row}>{row}</Link>
                                         </TableCell>
                                     </TableRow>
                                 ))))}

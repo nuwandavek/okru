@@ -468,7 +468,7 @@ class HomeScreen extends React.Component {
     };
 
     navSignin = () => {
-        window.location.href = '/okrs'
+        window.location.href = '/?m=okrs'
 
     };
 
@@ -574,10 +574,10 @@ class HomeScreen extends React.Component {
                         <BottomNavigation value={this.state.mode} onChange={(event, newValue) => {
                                 this.setState({mode:newValue})
                                 if(newValue===0){
-                                    window.location.href='/okrs';
+                                    window.location.href='/?m=okrs';
                                 }
                                 else if(newValue===1){
-                                    window.location.href='/copom';
+                                    window.location.href='/?m=copom';
                                 }
                             }}
                             showLabels
@@ -615,7 +615,7 @@ class HomeScreen extends React.Component {
                     modes and follow your friends.</Typography>
 
                                 <Typography variant="overline">More features are coming soon!</Typography>
-                                <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/okrs?user=vivekaithal44&q=1&y=2020')}>See a sample OKR</Button>
+                                <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/?m=okrs&user=vivekaithal44&q=1&y=2020')}>See a sample OKR</Button>
                             </Grid>
 
 
