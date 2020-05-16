@@ -121,7 +121,7 @@ class PomCard extends React.Component {
                             (
                             <Fab size="small" color="primary" aria-label="add" className={classes.edit}
                             onClick={()=>{
-                                textPom();
+                                textPom(this.state.text);
                                 this.setState({textEdit:false})
                                 }
                             }
@@ -162,6 +162,7 @@ class PomCard extends React.Component {
                     
                 
                 {
+                    pomData.time>0?(
                     this.state.textEdit?
                     (
                         <TextFieldCharCount
@@ -185,6 +186,7 @@ class PomCard extends React.Component {
 
                         </Typography>
                     )
+                    ):('')
                 }
                 
             </Grid>
