@@ -112,7 +112,7 @@ const styles = theme => ({
         flexDirection: "column"
     },
     homeAdd: {
-        marginTop: "50px"
+        margin: "50px"
     },
     kr: {
         borderLeft: "5px #000 solid",

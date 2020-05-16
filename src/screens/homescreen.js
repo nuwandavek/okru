@@ -88,6 +88,7 @@ class HomeScreen extends React.Component {
             userlist: [],
             followlist: {},
             followerslist: {},
+            poms: {},
             isFollowing: false,
             userRequested: new URLSearchParams(window.location.search).get('user'),
             quarter: 'Q' + (new URLSearchParams(window.location.search).get('q') || Math.ceil((new Date().getMonth() + 1) / 3)),
@@ -184,7 +185,7 @@ class HomeScreen extends React.Component {
 
                         }
 
-
+                        // Get Current User OKRs
                         if (this.state.userRequested === null) {
 
                             firebase.database().ref(this.deployment + '/okrs/').child(user.uid).child(this.state.year).child(this.state.quarter).once('value', (snapshot) => {
@@ -215,7 +216,7 @@ class HomeScreen extends React.Component {
                             })
                         }
 
-
+                        // Get All following list
                         firebase.database().ref(this.deployment + '/userlist/' + user.uid).on('value', (snapshot) => {
                             if (snapshot.val() !== null) {
                                 this.setState({ followlist: snapshot.val() }, () => {
@@ -229,7 +230,8 @@ class HomeScreen extends React.Component {
                                 this.setState({ followlist: {} })
                             }
                         })
-
+                        
+                        // Get all followers list
                         firebase.database().ref(this.deployment + '/userlist').once('value', (snapshot) => {
                             // console.log('alluserlist',snapshot.val());
                             let obj = snapshot.val();
@@ -275,6 +277,7 @@ class HomeScreen extends React.Component {
 
         })
 
+        // Get Another User OKRs (Not signed in, maybe)
         if (!this.state.isSignedIn && this.state.userRequested !== null) {
             firebase.database().ref(this.deployment + '/userlist/all').once('value', (d) => {
                 const dd = d.val();
@@ -296,22 +299,35 @@ class HomeScreen extends React.Component {
             })
 
         }
-
+        
+        // Get all users
         firebase.database().ref(this.deployment + '/userlist/all').once('value', (snapshot) => {
             if (snapshot.val() !== null) {
                 this.setState({ userlist: Object.values(snapshot.val()) }, () => {
-                    // console.log('user-list-updated!', Object.values(snapshot.val()));
                 });
             }
         })
 
-        // firebase.database().ref(this.deployment+'/userlist/').once('value', (snapshot) => {
-        //     console.log('alluserlist',snapshot.val());
-        //     if (snapshot.val() !== null) {
-        //         console.log('alluserlist',snapshot.val());
-        //     }
-        // })
 
+        // Get all poms and remap to the nameids
+        firebase.database().ref(this.deployment + '/userlist/all').once('value', (d) => {
+            const dd = d.val();
+            
+            const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+
+            firebase.database().ref(this.deployment + '/poms').child(queryDate)
+            .once('value', (snapshot) => {
+                const pomIds = snapshot.val();
+                const pomProcessed = {}
+                if (pomIds !== null) {
+                    
+                    for (var key in pomIds){
+                        pomProcessed[dd[key]] = pomIds[key]
+                    }
+                    this.setState({ poms: pomProcessed});
+                }
+            })
+        })
 
 
 
@@ -484,12 +500,13 @@ class HomeScreen extends React.Component {
                             <Grid item xs={12} sm={12} md={8} lg={6} xl={6}>
                                 <Typography variant="h1" className={classes.jumbo}>
                                     <Link href="/" underline="none" color="textPrimary">okru</Link>
+                                    {this.deployment==='dev'?'-dev':''}
                                 </Typography>
                             </Grid>
                             <Grid item xs={false} sm={false} md={2} lg={3} xl={3}>
                             </Grid>
                         </Grid>
-                        <Grid container item spacing={3} direction="row" justify="center" xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Grid container item spacing={3} direction="row" justify="center" xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom: '50px'}}>
                             <Grid container item spacing={3} xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
                             <Grid container item spacing={3} direction="column" xs={12} sm={12} md={7} lg={7} xl={7}>
                                 {this.state.mode?
