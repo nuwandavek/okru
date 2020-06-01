@@ -47,7 +47,8 @@ class CoPom extends React.Component {
             poms: [],
             following: props.following,
             selfPomCount: 0,
-            myPom: {}
+            myPom: {},
+            pommers: 0
         }
 
 
@@ -101,6 +102,7 @@ class CoPom extends React.Component {
         // Get all poms and remap to the nameids
         // console.log(following, user);
         const pomProcessed = {}
+        let pommers = 0;
         firebase.database().ref(this.deployment + '/userlist/all').once('value', (allUserSnap) => {
             const allUsers = allUserSnap.val();
 
@@ -191,6 +193,7 @@ class CoPom extends React.Component {
                                     })
                                 }
                                 else {
+                                    pommers+=1;
                                     filteredPoms.push({
                                         pommer: d,
                                         time: 25 - parseInt(elapsed),
@@ -217,13 +220,14 @@ class CoPom extends React.Component {
                             this.setState({
                                 poms: filteredPoms,
                                 myPom: myPom,
-                                selfPomCount, latestPomElapsed, latestPomModified, latestPomStart, latestPomStatus, latestPomText
+                                selfPomCount, latestPomElapsed, latestPomModified, latestPomStart,
+                                latestPomStatus, latestPomText
                             });
                         }
                         else {
                             this.setState({
                                 myPom: myPom,
-                                poms: filteredPoms
+                                poms: filteredPoms,
                             });
                         }
 
@@ -253,6 +257,12 @@ class CoPom extends React.Component {
                     }
                 })
         })
+
+        if (pommers>this.state.pommers){
+            this.setState({pommers:pommers, open:true},()=>{
+                beep.play();
+            })
+        }
 
 
 
@@ -422,7 +432,7 @@ class CoPom extends React.Component {
                 </Grid>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    autoHideDuration={10000}
+                    autoHideDuration={15000}
                     onClose={() => { this.setState({ open: false }) }}
                     open={this.state.open}
                     key={'bottom-right'}
