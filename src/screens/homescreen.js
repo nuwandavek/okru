@@ -331,7 +331,8 @@ class HomeScreen extends React.Component {
 
             
             // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
-            const queryDate = new Date().getUTCDate() + '-'+new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+            // const queryDate = new Date().getUTCDate() + '-'+new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+            const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
 
             firebase.database().ref(this.deployment + '/poms').child(queryDate)
             .once('value', (snapshot) => {

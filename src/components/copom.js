@@ -107,7 +107,9 @@ class CoPom extends React.Component {
             const allUsers = allUserSnap.val();
 
             // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
-            const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+            // const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+            const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
+
 
             firebase.database().ref(this.deployment + '/poms').child(queryDate)
                 .once('value', (snapshot) => {
@@ -271,7 +273,8 @@ class CoPom extends React.Component {
     startPom() {
 
         // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
-        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        // const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
 
         const utc = new Date().getTime();
 
@@ -316,7 +319,9 @@ class CoPom extends React.Component {
     resumePom() {
 
         // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
-        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        // const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
+
         const utc = new Date().getTime();
 
 
@@ -345,7 +350,9 @@ class CoPom extends React.Component {
     pausePom() {
 
         // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
-        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        // const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
+
         const utc = new Date().getTime();
 
         let elapsedNew = (utc - this.state.latestPomModified) + this.state.latestPomElapsed;
@@ -375,7 +382,9 @@ class CoPom extends React.Component {
     textPom(txt) {
 
         // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
-        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        // const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+        const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
+
 
         firebase.database().ref(this.deployment + '/poms').child(queryDate).child(this.state.user.uid)
             .child(this.state.selfPomCount - 1).child('text').set(txt);
