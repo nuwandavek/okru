@@ -81,14 +81,14 @@ class PomCard extends React.Component {
     // }
 
     render() {
-        const { classes, pomData, startPom, pausePom, textPom, resumePom } = this.props;
+        const { classes, pomData, startPom, pausePom, textPom, resumePom, selfPom } = this.props;
 
         // this.setState({text: pomData.text, status:pomData.status});
         const pomArray = new Array(pomData.poms).fill(0);
 
 
         return (
-            <Grid md={3} item container className={`${classes.pomcards} ${pomData.self ? classes.outline : ""}`} 
+            <Grid md={3} item container className={`${classes.pomcards} ${selfPom ? classes.outline : ""}`} 
             direction="column" justify="space-around" alignItems="center">
 
                     <Link color="inherit" href={"/?user=" + pomData.pommer}>
@@ -111,7 +111,7 @@ class PomCard extends React.Component {
 
 
 
-                {pomData.self?
+                {selfPom?
                     <Grid container direction="row" justify="space-evenly">
                         {this.state.status==='inprogress'?
                         (

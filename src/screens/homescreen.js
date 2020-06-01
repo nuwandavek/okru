@@ -328,8 +328,10 @@ class HomeScreen extends React.Component {
         // Get all pommers
         firebase.database().ref(this.deployment + '/userlist/all').once('value', (d) => {
             const dd = d.val();
+
             
-            const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+            // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+            const queryDate = new Date().getUTCDate() + '-'+new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
 
             firebase.database().ref(this.deployment + '/poms').child(queryDate)
             .once('value', (snapshot) => {
@@ -469,6 +471,7 @@ class HomeScreen extends React.Component {
 
     navSignin = () => {
         window.location.href = '/?m=okrs'
+        // window.history.pushState({}, null, '/?m=okrs');
 
     };
 
@@ -549,7 +552,7 @@ class HomeScreen extends React.Component {
                             <Grid container item spacing={3} direction="column" xs={12} sm={12} md={3} lg={3} xl={3}>
                                 <Grid item >
 
-                                    <FollowingTable following={this.state.userlist} name="All Users" initText="Loading Users..." />
+                                    <FollowingTable following={this.state.userlist} name="All Users" initText="No Users :(" />
                                     <FollowingTable following={this.state.pommers} name="All Pommers" initText="No Pommers Today!" />
 
                                 </Grid>
@@ -574,10 +577,12 @@ class HomeScreen extends React.Component {
                         <BottomNavigation value={this.state.mode} onChange={(event, newValue) => {
                                 this.setState({mode:newValue})
                                 if(newValue===0){
-                                    window.location.href='/?m=okrs';
+                                    window.history.pushState({}, null, '/?m=okrs');
+                                    // window.location.href='/?m=okrs';
                                 }
                                 else if(newValue===1){
-                                    window.location.href='/?m=copom';
+                                    window.history.pushState({}, null, '/?m=copom');
+                                    // window.location.href='/?m=copom';
                                 }
                             }}
                             showLabels

@@ -1,12 +1,17 @@
 import React from 'react';
+import UIfx from 'uifx';
+import notif from '../assets/intuition.mp3';
 import { withStyles } from '@material-ui/core/styles';
 import {
     Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    TablePagination, Link, TextField, Grid, Breadcrumbs
+    TablePagination, Link, TextField, Grid, Breadcrumbs, Snackbar, SnackbarContent
 } from '@material-ui/core';
 
 import firebase from '../firebase';
 import PomCard from './pomcard';
+
+const beep = new UIfx(notif);
+
 
 const styles = theme => ({
     brumb: {
@@ -22,6 +27,10 @@ const styles = theme => ({
         margin: '2px',
         borderRadius: '5px'
 
+    },
+    snack: {
+        backgroundColor: "#c0392b",
+        color: '#fff'
     }
 });
 
@@ -32,12 +41,13 @@ class CoPom extends React.Component {
     constructor(props) {
         super(props);
 
-        props.following.push(props.user.userID)
+        // props.following.push(props.user.userID)
         this.state = {
             user: props.user,
             poms: [],
             following: props.following,
-            selfPomCount: 0
+            selfPomCount: 0,
+            myPom: {}
         }
 
 
@@ -54,13 +64,14 @@ class CoPom extends React.Component {
 
     componentWillReceiveProps({ user, following, poms }) {
 
-        following.push(user.userID);
-        this.setState({ user, following });
-        this.refreshAllPoms(following, user);
+        // following.push(user.userID);
+        this.setState({ user, following }, () => {
+            this.refreshAllPoms(following, user);
+        });
 
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         clearInterval(this.inter);
     }
 
@@ -74,64 +85,101 @@ class CoPom extends React.Component {
         }
 
         this.refreshAllPoms(this.state.following, this.state.user);
-        
+
     }
 
-    componentWillMount(){
+    componentWillMount() {
         // this.refreshAllPoms(this.state.following, this.state.user);
-        this.inter = setInterval(()=>{     
+        this.inter = setInterval(() => {
             this.refreshAllPoms(this.state.following, this.state.user)
-            console.log('poms refreshed!',this.state)
-        },60000);
+            console.log('poms refreshed!', this.state)
+        }, 60000);
     }
 
-    
+
     refreshAllPoms(following, user) {
         // Get all poms and remap to the nameids
+        // console.log(following, user);
         const pomProcessed = {}
-        firebase.database().ref(this.deployment + '/userlist/all').once('value', (d) => {
-            const dd = d.val();
+        firebase.database().ref(this.deployment + '/userlist/all').once('value', (allUserSnap) => {
+            const allUsers = allUserSnap.val();
 
-            const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+            // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+            const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
 
             firebase.database().ref(this.deployment + '/poms').child(queryDate)
                 .once('value', (snapshot) => {
                     const pomIds = snapshot.val();
 
+                    //Check if there are no poms today
                     if (pomIds !== null) {
 
+                        // convert Poms with the readable ids
                         for (var key in pomIds) {
-                            pomProcessed[dd[key]] = pomIds[key]
+                            pomProcessed[allUsers[key]] = pomIds[key]
                         }
 
                         const filteredPoms = []
-                        // following.push(user.userID);
+                        let myPom = {}
 
                         let selfPresent = false;
                         let selfPomCount, latestPomStatus, latestPomModified, latestPomElapsed, latestPomStart, latestPomText;
 
+                        // If you are present in the poms today
+                        if (pomProcessed[user.userID]) {
+                            let curPoms = pomProcessed[user.userID];
+                            //Check if the last one is active
+                            let pomLength = curPoms.length;
+                            let latestPom = curPoms[pomLength - 1];
+                            let elapsed;
+
+                            if (latestPom.status === 'pause') {
+                                elapsed = (latestPom.elapsed / 60000)
+                            }
+                            else {
+                                elapsed = (((new Date().getTime() - latestPom.modifiedUTC) / 60000) + (latestPom.elapsed / 60000))
+                            }
+                            selfPresent = true;
+                            selfPomCount = pomLength;
+                            latestPomStatus = latestPom.status;
+                            latestPomModified = latestPom.modifiedUTC;
+                            latestPomElapsed = latestPom.elapsed;
+                            latestPomStart = latestPom.startUTC;
+                            latestPomText = latestPom.text;
+                            if (elapsed >= 25) {
+                                myPom = {
+                                    pommer: user.userID,
+                                    time: 0,
+                                    status: '',
+                                    text: '',
+                                    poms: pomLength,
+                                }
+                            }
+                            else {
+                                myPom = {
+                                    pommer: user.userID,
+                                    time: 25 - parseInt(elapsed),
+                                    status: latestPom.status,
+                                    text: latestPom.text,
+                                    poms: pomLength - 1,
+                                }
+                            }
+                        }
+
+                        // Iterate over all following
                         following.map(d => {
+                            // Check if the user is present in today's poms
                             if (pomProcessed[d]) {
                                 let curPoms = pomProcessed[d];
                                 //Check if the last one is active
                                 let pomLength = curPoms.length;
                                 let latestPom = curPoms[pomLength - 1];
                                 let elapsed;
-                                if (latestPom.status==='pause'){
+                                if (latestPom.status === 'pause') {
                                     elapsed = (latestPom.elapsed / 60000)
                                 }
-                                else{
+                                else {
                                     elapsed = (((new Date().getTime() - latestPom.modifiedUTC) / 60000) + (latestPom.elapsed / 60000))
-                                }
-                                if (user.userID === d) {
-
-                                    selfPresent = true;
-                                    selfPomCount = pomLength;
-                                    latestPomStatus = latestPom.status;
-                                    latestPomModified = latestPom.modifiedUTC;
-                                    latestPomElapsed = latestPom.elapsed;
-                                    latestPomStart = latestPom.startUTC;
-                                    latestPomText = latestPom.text;
                                 }
                                 if (elapsed >= 25) {
                                     filteredPoms.push({
@@ -140,7 +188,6 @@ class CoPom extends React.Component {
                                         status: '',
                                         text: '',
                                         poms: pomLength,
-                                        self: (user.userID === d)
                                     })
                                 }
                                 else {
@@ -150,10 +197,10 @@ class CoPom extends React.Component {
                                         status: latestPom.status,
                                         text: latestPom.text,
                                         poms: pomLength - 1,
-                                        self: (user.userID === d)
                                     })
                                 }
                             }
+                            // if the user is not present
                             else {
                                 filteredPoms.push({
                                     pommer: d,
@@ -161,7 +208,6 @@ class CoPom extends React.Component {
                                     status: '',
                                     text: '',
                                     poms: 0,
-                                    self: (user.userID === d)
                                 })
                             }
 
@@ -170,29 +216,40 @@ class CoPom extends React.Component {
                         if (selfPresent) {
                             this.setState({
                                 poms: filteredPoms,
+                                myPom: myPom,
                                 selfPomCount, latestPomElapsed, latestPomModified, latestPomStart, latestPomStatus, latestPomText
                             });
                         }
                         else {
                             this.setState({
-                                poms: filteredPoms,
-                                selfPomCount:0
+                                myPom: myPom,
+                                poms: filteredPoms
                             });
                         }
 
 
                     }
-                    else{
-                        this.setState({
-                            poms: [{
-                                pommer: user.userID,
+                    else {
+                        let allPoms = [];
+                        let myPom = {
+                            pommer: user.userID,
+                            time: 0,
+                            status: '',
+                            text: '',
+                            poms: 0
+                        }
+
+                        following.map((fol) => {
+                            allPoms.push({
+                                pommer: fol,
                                 time: 0,
                                 status: '',
                                 text: '',
                                 poms: 0,
-                                self: true
-                            }]
+                            })
                         })
+
+                        this.setState({ poms: allPoms, myPom: myPom })
                     }
                 })
         })
@@ -202,8 +259,10 @@ class CoPom extends React.Component {
     }
 
     startPom() {
-        
-        const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+
+        // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
+
         const utc = new Date().getTime();
 
         firebase.database().ref(this.deployment + '/poms').child(queryDate).child(this.state.user.uid)
@@ -217,32 +276,37 @@ class CoPom extends React.Component {
 
         // this.refreshAllPoms(this.state.following, this.state.user);
 
-        let newPoms = this.state.poms;
-        newPoms[newPoms.length-1] = {
+        let myPom = this.state.myPom;
+        myPom = {
             pommer: this.state.user.userID,
             poms: this.state.selfPomCount,
-            self: true,
+            // self: true,
             status: "inprogress",
             text: "",
             time: 25,
         }
         this.setState({
-            poms:newPoms,
-            selfPomCount: this.state.selfPomCount+1, 
-            latestPomElapsed : 0,
+            myPom: myPom,
+            selfPomCount: this.state.selfPomCount + 1,
+            latestPomElapsed: 0,
             latestPomModified: utc,
             latestPomStart: utc,
             latestPomStatus: 'inprogress',
-            latestPomText : ''
+            latestPomText: '',
+            open: true
 
         })
+
+        beep.play();
+
 
 
     }
 
     resumePom() {
-        
-        const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+
+        // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
         const utc = new Date().getTime();
 
 
@@ -257,12 +321,11 @@ class CoPom extends React.Component {
 
         // this.refreshAllPoms(this.state.following, this.state.user);
 
-        let newPoms = this.state.poms;
-        let lePom = newPoms[newPoms.length-1]
-        newPoms[newPoms.length-1].status = "inprogress";
+        let myPom = this.state.myPom;
+        myPom.status = "inprogress";
 
         this.setState({
-            poms:newPoms,
+            myPom: myPom,
             latestPomModified: utc,
             latestPomStatus: 'inprogress',
         })
@@ -270,8 +333,9 @@ class CoPom extends React.Component {
     }
 
     pausePom() {
-        
-        const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+
+        // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
         const utc = new Date().getTime();
 
         let elapsedNew = (utc - this.state.latestPomModified) + this.state.latestPomElapsed;
@@ -287,12 +351,11 @@ class CoPom extends React.Component {
 
         // this.refreshAllPoms(this.state.following, this.state.user);
 
-        let newPoms = this.state.poms;
-        let lePom = newPoms[newPoms.length-1]
-        newPoms[newPoms.length-1].status = "pause";
+        let myPom = this.state.myPom;
+        myPom.status = "pause";
         this.setState({
-            poms:newPoms,
-            latestPomElapsed : elapsedNew,
+            myPom: myPom,
+            latestPomElapsed: elapsedNew,
             latestPomModified: utc,
             latestPomStatus: 'pause',
         })
@@ -300,23 +363,28 @@ class CoPom extends React.Component {
     }
 
     textPom(txt) {
-        
-        const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+
+        // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
+        const queryDate = new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
 
         firebase.database().ref(this.deployment + '/poms').child(queryDate).child(this.state.user.uid)
             .child(this.state.selfPomCount - 1).child('text').set(txt);
 
         // this.refreshAllPoms(this.state.following, this.state.user);
 
-        let newPoms = this.state.poms;
-        let lePom = newPoms[newPoms.length-1]
-        newPoms[newPoms.length-1].text = txt;
+        let myPom = this.state.myPom;
+        myPom.text = txt;
 
         this.setState({
-            poms:newPoms,
+            myPom: myPom,
             latestPomText: txt,
+            open: false
         })
 
+    }
+
+    handleClose() {
+        this.setState({ open: false })
     }
 
 
@@ -324,7 +392,7 @@ class CoPom extends React.Component {
     render() {
         const { classes, following, user } = this.props;
 
-        console.log('state of poms',this.state.poms);
+        console.log('state of poms', this.state.poms);
 
 
 
@@ -333,16 +401,36 @@ class CoPom extends React.Component {
             <Paper elevation={0}>
                 <Grid container className={classes.brumb} direction="row" justify="space-between" alignItems="center">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Typography color="inherit">CoPom [{new Date().toLocaleDateString()}]</Typography>
+                        {/* <Typography color="inherit">CoPom [{new Date().toLocaleDateString()}]</Typography> */}
+                        <Typography color="inherit">CoPom [{new Date().getUTCDate() + '-' + new Date().getUTCMonth() + '-' + new Date().getUTCFullYear()}]</Typography>
                     </Breadcrumbs>
                 </Grid>
                 <Grid container direction="row" justify="center">
+                    <PomCard selfPom={true} pomData={this.state.myPom} key={0} startPom={this.startPom} pausePom={this.pausePom} textPom={this.textPom} resumePom={this.resumePom}></PomCard>
+
+                </Grid>
+                <Grid container direction="row" justify="flex-start">
+                    <Typography>Following</Typography>
+                </Grid>
+
+                <Grid container direction="row" justify="flex-start">
                     {
                         this.state.poms.map((d, i) => (
-                            <PomCard pomData={d} key={i} startPom={this.startPom} pausePom={this.pausePom} textPom={this.textPom} resumePom={this.resumePom}></PomCard>
+                            <PomCard selfPom={false} pomData={d} key={i + 1} startPom={this.startPom} pausePom={this.pausePom} textPom={this.textPom} resumePom={this.resumePom}></PomCard>
                         ))
                     }
                 </Grid>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    autoHideDuration={10000}
+                    onClose={() => { this.setState({ open: false }) }}
+                    open={this.state.open}
+                    key={'bottom-right'}
+                >
+                    <SnackbarContent className={classes.snack}
+                        message="Yay, A new Pom!"
+                    />
+                </Snackbar>
             </Paper>
 
         )
