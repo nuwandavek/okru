@@ -36,7 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.MuiTab-textColorInherit{
+  color: #aaa !important;
+}
 .Mui-selected{
-  background: #333 !important;
+  /* background: #333 !important; */
   color: #fff !important;
+}
+
+.MuiTabs-indicator{
+  background: #fff !important;
+  height: 3px !important;
+}
+
+.MuiTabs-flexContainer{
+  justify-content: space-around !important;
+}
+
+.MuiTab-labelIcon{
+  min-height: 0px !important;
+  margin: 0px !important;
+  /* padding: 0px !important; */
 }

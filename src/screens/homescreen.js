@@ -1,11 +1,13 @@
 import React from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Menu, Button, MenuItem, Link, Divider, Avatar, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
+import { Grid, Typography, Menu, Button, MenuItem, Link, Divider, Avatar, BottomNavigation, 
+    BottomNavigationAction, Tabs, Tab } from '@material-ui/core';
 import FollowingTable from '../components/followingtable';
 import Okrs from '../components/okrs';
 import CoPom from '../components/copom';
 import Edit from '../components/dialog';
+import FrontPage from '../components/frontpage';
 import firebase from '../firebase';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
@@ -27,7 +29,10 @@ const styles = theme => ({
     },
     jumbo: {
         fontWeight: 600,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        color: "#333",
+        padding: "20px",
+        marginBottom: '20px'
     },
     dark: {
         background: '#333'
@@ -43,7 +48,7 @@ const styles = theme => ({
         position: 'fixed',
         bottom: 0,
         borderTop: '1px solid #eee',
-        zIndex:'10',
+        zIndex: '10',
     },
     edit: {
         maxWidth: '100%',
@@ -57,6 +62,18 @@ const styles = theme => ({
             // background: '#fff'
         },
     },
+    tab:{
+        background: '#333',
+        borderRadius: "5px"
+    },
+    rightpane:{
+        paddingRight: "5px",
+        paddingLeft: "5px"
+    },
+    leftpane:{
+        paddingRight: "5px",
+        paddingLeft: "5px"
+    }
 });
 
 
@@ -107,7 +124,7 @@ class HomeScreen extends React.Component {
     }
 
     signOut() {
-        this.setState({ 
+        this.setState({
             anchorEl: null,
             isSignedIn: false,
             curUserOKRs: [],
@@ -117,7 +134,7 @@ class HomeScreen extends React.Component {
             followerslist: {},
             poms: {},
             userRequested: null
-         })
+        })
 
         firebase.auth().signOut();
     }
@@ -171,12 +188,12 @@ class HomeScreen extends React.Component {
                     const userID = user.email.split('@')[0].replace('.', '');
                     usersRef.child(user.uid).once('value', (snapshot) => {
                         if (snapshot.exists()) {
-                            this.setState({ 'curUser': snapshot.val()});
+                            this.setState({ 'curUser': snapshot.val() });
                             // This user exists, so we need to get them
-                            if(this.state.userRequested===null){
+                            if (this.state.userRequested === null) {
                                 this.setState({ 'userRequested': snapshot.val().userID })
                             }
-                            
+
                         }
                         else {
                             // This user does not exists, so we need to add the user to our userlist
@@ -192,7 +209,7 @@ class HomeScreen extends React.Component {
                             const newUserRef = firebase.database().ref(this.deployment + '/userlist/all/' + user.uid);
                             newUserRef.set(userID);
                             this.setState({ 'curUser': userToStore })
-                            if(this.state.userRequested===null){
+                            if (this.state.userRequested === null) {
                                 this.setState({ 'curUser': snapshot.val(), 'userRequested': snapshot.val().userID })
                             }
 
@@ -243,7 +260,7 @@ class HomeScreen extends React.Component {
                                 this.setState({ followlist: {} })
                             }
                         })
-                        
+
                         // Get all followers list
                         firebase.database().ref(this.deployment + '/userlist').once('value', (snapshot) => {
                             // console.log('alluserlist',snapshot.val());
@@ -287,7 +304,7 @@ class HomeScreen extends React.Component {
 
                 }
             }
-            else{
+            else {
                 // window.location.href='/okrs';
             }
 
@@ -315,7 +332,7 @@ class HomeScreen extends React.Component {
             })
 
         }
-        
+
         // Get all users
         firebase.database().ref(this.deployment + '/userlist/all').once('value', (snapshot) => {
             if (snapshot.val() !== null) {
@@ -329,23 +346,23 @@ class HomeScreen extends React.Component {
         firebase.database().ref(this.deployment + '/userlist/all').once('value', (d) => {
             const dd = d.val();
 
-            
+
             // const queryDate = new Date().toLocaleDateString().replace(/\//g, '-');
             // const queryDate = new Date().getUTCDate() + '-'+new Date().getUTCMonth() + '-' + new Date().getUTCFullYear();
             const queryDate = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear();
 
             firebase.database().ref(this.deployment + '/poms').child(queryDate)
-            .once('value', (snapshot) => {
-                const pomIds = snapshot.val();
-                const pommers = [];
-                if (pomIds !== null) {
-                    
-                    for (var key in pomIds){
-                        pommers.push(dd[key]);
+                .once('value', (snapshot) => {
+                    const pomIds = snapshot.val();
+                    const pommers = [];
+                    if (pomIds !== null) {
+
+                        for (var key in pomIds) {
+                            pommers.push(dd[key]);
+                        }
+                        this.setState({ pommers });
                     }
-                    this.setState({pommers});
-                }
-            })
+                })
         })
 
 
@@ -507,15 +524,15 @@ class HomeScreen extends React.Component {
                             open={Boolean(this.state.anchorEl)}
                             onClose={this.navHandleClose}
                         >
-                            {!this.state.isSignedIn ? <MenuItem onClick={this.navSignin}>Login</MenuItem> : 
-                            <MenuItem onClick={() => {
-                                console.log('logged out!');
-                                
-                                this.setState({ isSignedIn: false },()=>{
-                                    this.signOut();
-                                    // window.location.href = '/okrs';
-                                });
-                            }}>Logout</MenuItem>}
+                            {!this.state.isSignedIn ? <MenuItem onClick={this.navSignin}>Login</MenuItem> :
+                                <MenuItem onClick={() => {
+                                    console.log('logged out!');
+
+                                    this.setState({ isSignedIn: false }, () => {
+                                        this.signOut();
+                                        // window.location.href = '/okrs';
+                                    });
+                                }}>Logout</MenuItem>}
                         </Menu>
                         {/* </Grid> */}
                         <Grid container item direction="row">
@@ -524,34 +541,54 @@ class HomeScreen extends React.Component {
                             <Grid item xs={12} sm={12} md={8} lg={6} xl={6}>
                                 <Typography variant="h1" className={classes.jumbo}>
                                     <Link href="/" underline="none" color="textPrimary">okru</Link>
-                                    {this.deployment==='dev'?'-dev':''}
+                                    {this.deployment === 'dev' ? '-dev' : ''}
                                 </Typography>
                             </Grid>
                             <Grid item xs={false} sm={false} md={2} lg={3} xl={3}>
                             </Grid>
                         </Grid>
-                        <Grid container item spacing={3} direction="row" justify="center" xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom: '50px'}}>
-                            <Grid container item spacing={3} xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
-                            <Grid container item spacing={3} direction="column" xs={12} sm={12} md={7} lg={7} xl={7}>
-                                {this.state.mode?
-                                (
-                                <CoPom user={this.state.curUser} following={Object.values(this.state.followlist)}></CoPom>
-                                ):(
-                                    <Okrs
-                                    okrList={this.state.curUserOKRs}
-                                    handleOpenDialog={this.handleOpenDialog}
-                                    selfView={this.state.curUser.userID === this.state.userRequested}
-                                    isFollowing={this.state.isFollowing}
-                                    userBeingViewed={this.state.userRequested}
-                                    handleFollow={this.handleFollow}
-                                    isSignedIn={this.state.isSignedIn}
-                                    quarter={this.state.quarter}
-                                    year={this.state.year}
-                                    updateProgress={this.updateProgress}></Okrs>
-                                )}
+                        <Grid container item  direction="row" justify="center" xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginBottom: '50px' }}>
+                            <Grid container item  xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
+                            <Grid container item  className={classes.leftpane} direction="column" xs={12} sm={12} md={7} lg={7} xl={7}>
+                                <Tabs
+                                    value={this.state.mode}
+                                    onChange={(event, newValue) => {
+                                        this.setState({ mode: newValue })
+                                        if (newValue === 0) {
+                                            window.history.pushState({}, null, '/?m=okrs');
+                                            // window.location.href='/?m=okrs';
+                                        }
+                                        else if (newValue === 1) {
+                                            window.history.pushState({}, null, '/?m=copom');
+                                            // window.location.href='/?m=copom';
+                                        }
+                                    }}
+                                    // indicatorColor="none"
+                                    // textColor="none"
+                                    className={classes.tab}
+                                >
+                                    <Tab icon={<FormatListBulletedIcon />} label="OKRs" />
+                                    <Tab icon={<GroupWorkIcon />} label="CoPom" />
+                                </Tabs>
+                                {this.state.mode ?
+                                    (
+                                        <CoPom user={this.state.curUser} following={Object.values(this.state.followlist)}></CoPom>
+                                    ) : (
+                                        <Okrs
+                                            okrList={this.state.curUserOKRs}
+                                            handleOpenDialog={this.handleOpenDialog}
+                                            selfView={this.state.curUser.userID === this.state.userRequested}
+                                            isFollowing={this.state.isFollowing}
+                                            userBeingViewed={this.state.userRequested}
+                                            handleFollow={this.handleFollow}
+                                            isSignedIn={this.state.isSignedIn}
+                                            quarter={this.state.quarter}
+                                            year={this.state.year}
+                                            updateProgress={this.updateProgress}></Okrs>
+                                    )}
                             </Grid>
-                            <Grid container item spacing={3} direction="column" xs={12} sm={12} md={3} lg={3} xl={3}>
-                                <Grid item >
+                            <Grid container item  className={classes.rightpane} direction="column" xs={12} sm={12} md={3} lg={3} xl={3}>
+                                <Grid >
 
                                     <FollowingTable following={this.state.userlist} name="All Users" initText="No Users :(" />
                                     <FollowingTable following={this.state.pommers} name="All Pommers" initText="No Pommers Today!" />
@@ -559,73 +596,45 @@ class HomeScreen extends React.Component {
                                 </Grid>
                                 {this.state.isSignedIn ?
                                     <Grid>
-                                        <Grid item >
 
                                             <FollowingTable following={Object.values(this.state.followlist)} name="Following" initText="You're not following anyone!" />
-
-                                        </Grid>
-                                        <Grid item >
-
                                             <FollowingTable following={Object.values(this.state.followerslist)} name="Followers" initText="You do not have any followers yet!" />
 
-                                        </Grid>
                                     </Grid>
                                     : ''}
                             </Grid>
-                            <Grid container item spacing={3} xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
-                        
+                            <Grid container item  xs={false} sm={false} md={1} lg={1} xl={1}></Grid>
+
                         </Grid>
-                        <BottomNavigation value={this.state.mode} onChange={(event, newValue) => {
-                                this.setState({mode:newValue})
-                                if(newValue===0){
-                                    window.history.pushState({}, null, '/?m=okrs');
-                                    // window.location.href='/?m=okrs';
-                                }
-                                else if(newValue===1){
-                                    window.history.pushState({}, null, '/?m=copom');
-                                    // window.location.href='/?m=copom';
-                                }
-                            }}
+                        {/* <BottomNavigation value={this.state.mode} onChange={(event, newValue) => {
+                            this.setState({ mode: newValue })
+                            if (newValue === 0) {
+                                window.history.pushState({}, null, '/?m=okrs');
+                                // window.location.href='/?m=okrs';
+                            }
+                            else if (newValue === 1) {
+                                window.history.pushState({}, null, '/?m=copom');
+                                // window.location.href='/?m=copom';
+                            }
+                        }}
                             showLabels
                             className={classes.stickToBottom}
                         >
                             <BottomNavigationAction className={classes.edit} label="OKRs" icon={<FormatListBulletedIcon />} />
-                            {this.state.isSignedIn?<BottomNavigationAction className={classes.edit} label="CoPom" icon={<GroupWorkIcon />} />:''}
-                        </BottomNavigation>
+                            {this.state.isSignedIn ? <BottomNavigationAction className={classes.edit} label="CoPom" icon={<GroupWorkIcon />} /> : ''}
+                        </BottomNavigation> */}
 
                         {this.state.curUser.userID === this.state.userRequested ? <Edit openDialog={this.state.showDialog} handleCloseDialog={this.handleCloseDialog} showOKR={this.state.dialogContent} /> : ''}
 
-                        
+
 
                     </Grid>
-                    
+
 
                     )
                     :
                     (
-                        <div style={{ 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'center', 'alignItems': 'center', 'height': '100vh' }}>
-
-                            <Typography variant="h1" className={classes.jumbo}>
-                                <Link href="/" underline="none" color="textPrimary">okru</Link>
-                            </Typography>
-                            <Typography variant="caption">Set Personal OKRs, Be Accountable to Friends</Typography>
-                            <Typography variant="caption">Become a Better Version of You</Typography>
-                            <StyledFirebaseAuth
-                                uiConfig={this.uiConfig}
-                                firebaseAuth={firebase.auth()}
-                            />
-                            <Divider style={{ width: "30%", margin: "30px" }} />
-                            <Grid container direction="column" item xs={10} sm={6} md={6} lg={4} xl={4}>
-                                <Typography variant="subtitle1">This is a <b><i>Measure What Matters</i></b> meets <b><i>Elephant In The Brain</i></b> meets <b><i>Atomic Habits</i></b> effort to
-                                use personal OKRs that track System Metrics and positively decieve our silly brains. You can set your quarterly OKRs, pre-commit metrics, estimate possible failure
-                    modes and follow your friends.</Typography>
-
-                                <Typography variant="overline">More features are coming soon!</Typography>
-                                <Button autoFocus color="inherit" variant="outlined" onClick={() => (window.location.href = '/?m=okrs&user=vivekaithal44&q=1&y=2020')}>See a sample OKR</Button>
-                            </Grid>
-
-
-                        </div>
+                        <FrontPage></FrontPage>
                     )
                 }
             </div>

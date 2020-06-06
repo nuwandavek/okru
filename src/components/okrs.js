@@ -101,6 +101,7 @@ const styles = theme => ({
         color: '#fff',
         boxShadow: "none",
         "&:hover": {
+            boxShadow: "none",
             color: "#333",
             background: '#fff'
         },
@@ -112,7 +113,7 @@ const styles = theme => ({
         flexDirection: "column"
     },
     homeAdd: {
-        margin: "50px"
+        marginTop: "50px"
     },
     kr: {
         borderLeft: "5px #000 solid",
@@ -127,7 +128,7 @@ const styles = theme => ({
     },
     progressGrid:{
         height: "5px",
-        borderRadius: "5px"
+        // borderRadius: "5px"
     }
 });
 
@@ -194,7 +195,7 @@ class Okrs extends React.Component {
     }
 
 
-    printOKR = (okrs, user) => {
+    printOKR = (okrs, user, year, quarter) => {
         // console.log("print");
         var doc = new jsPDF({
             orientation: 'landscape'
@@ -228,7 +229,7 @@ class Okrs extends React.Component {
         doc.setTextColor('#999')
         doc.setFontSize(15)
         doc.setFont('courier')
-        doc.text(parseInt(width / 2), y(10), user + '/2020/Q1', { align: 'center' })
+        doc.text(parseInt(width / 2), y(10), user + '/'+year+'/'+quarter, { align: 'center' })
         doc.setFont('helvetica')
         doc.setTextColor('#000')
 
@@ -377,9 +378,17 @@ class Okrs extends React.Component {
 
                     {selfView && isSignedIn ?
 
-                        <Fab color="primary" aria-label="add" size="small" className={classes.edit} onClick={() => this.printOKR(okrList, userBeingViewed)}>
-                            <PrintIcon fontSize="small" />
-                        </Fab>
+                        // <Fab color="primary" aria-label="add" size="small" className={classes.edit} onClick={() => this.printOKR(okrList, userBeingViewed)}>
+                        //     <PrintIcon fontSize="small" />
+                        // </Fab>
+                        <Button
+                            variant="contained"
+                            color="default"
+                            size="small" className={classes.edit} onClick={() => this.printOKR(okrList, userBeingViewed, year, quarter)}
+                            startIcon={<PrintIcon fontSize="small" />}
+                        >
+                            Print OKRs
+                        </Button>
                         : (isSignedIn ? <Box className={classes.followBox}><Switch
                             checked={isFollowing}
                             onChange={handleFollow}
@@ -501,7 +510,7 @@ class Okrs extends React.Component {
 
                     </ExpansionPanelDetails>
                 </ExpansionPanel>))) :
-                    <Typography>No OKRs yet!</Typography>
+                    <Typography style={{margin: "30px"}}>No OKRs yet!</Typography>
                 }
                 {selfView && isSignedIn ? <Grid container direction="column" alignItems="center" justify="center" className={classes.homeAdd}>
                     <Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>

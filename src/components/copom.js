@@ -287,7 +287,16 @@ class CoPom extends React.Component {
                 text: ""
             });
 
-        // this.refreshAllPoms(this.state.following, this.state.user);
+        firebase.database().ref(this.deployment + '/pomsUser').child(this.state.user.uid).child(queryDate)
+            .child(this.state.selfPomCount).set({
+                elapsed: 0,
+                modifiedUTC: utc,
+                startUTC: utc,
+                status: "inprogress",
+                text: ""
+            });
+        
+            // this.refreshAllPoms(this.state.following, this.state.user);
 
         let myPom = this.state.myPom;
         myPom = {
@@ -334,6 +343,15 @@ class CoPom extends React.Component {
                 text: this.state.latestPomText
             });
 
+            firebase.database().ref(this.deployment + '/pomsUser').child(this.state.user.uid).child(queryDate)
+            .child(this.state.selfPomCount - 1).set({
+                elapsed: this.state.latestPomElapsed,
+                modifiedUTC: utc,
+                startUTC: this.state.latestPomStart,
+                status: "inprogress",
+                text: this.state.latestPomText
+            });
+
         // this.refreshAllPoms(this.state.following, this.state.user);
 
         let myPom = this.state.myPom;
@@ -366,6 +384,16 @@ class CoPom extends React.Component {
                 text: this.state.latestPomText
             });
 
+        
+        firebase.database().ref(this.deployment + '/pomsUser').child(this.state.user.uid).child(queryDate)
+            .child(this.state.selfPomCount - 1).set({
+                elapsed: elapsedNew,
+                modifiedUTC: utc,
+                startUTC: this.state.latestPomStart,
+                status: "pause",
+                text: this.state.latestPomText
+            });
+
         // this.refreshAllPoms(this.state.following, this.state.user);
 
         let myPom = this.state.myPom;
@@ -389,7 +417,10 @@ class CoPom extends React.Component {
         firebase.database().ref(this.deployment + '/poms').child(queryDate).child(this.state.user.uid)
             .child(this.state.selfPomCount - 1).child('text').set(txt);
 
-        // this.refreshAllPoms(this.state.following, this.state.user);
+        firebase.database().ref(this.deployment + '/pomsUser').child(this.state.user.uid).child(queryDate)
+            .child(this.state.selfPomCount - 1).child('text').set(txt);
+
+            // this.refreshAllPoms(this.state.following, this.state.user);
 
         let myPom = this.state.myPom;
         myPom.text = txt;
@@ -429,7 +460,7 @@ class CoPom extends React.Component {
 
                 </Grid>
                 <Grid container direction="row" justify="flex-start">
-                    <Typography>Following</Typography>
+                    <Typography className={classes.brumb}>Following</Typography>
                 </Grid>
 
                 <Grid container direction="row" justify="flex-start">
