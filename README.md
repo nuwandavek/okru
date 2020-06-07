@@ -32,6 +32,6 @@ For any feedback, comments or discussion, you can reach out to me at vivekaithal
 
 ## How to Develop Locally
 - Pull repo; `npm install`
-- `yarn start` to develop
+- `yarn start` to develop. (This will start a server on localhost:3000)
 - `yarn build` to build
 - push to master; Github Actions will push to gh-pages
