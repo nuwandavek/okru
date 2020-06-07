@@ -19,6 +19,7 @@ import PrintIcon from '@material-ui/icons/Print';
 import SpeedIcon from '@material-ui/icons/Speed';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FiberManualRecordOutlinedIcon from '@material-ui/icons/FiberManualRecordOutlined';
+import _ from 'lodash';
 
 import {
     Paper, Grid, Typography, ListItem, Button,
@@ -341,7 +342,7 @@ class Okrs extends React.Component {
         let idCounts = [0,0,0,0];
 
         okr.keyResults.map(d=>{
-            d.progress.map(f=>{
+            _.each(d.progress, f=> {
                 idCounts[f]+=1;
             })
         })
