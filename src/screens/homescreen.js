@@ -567,7 +567,7 @@ class HomeScreen extends React.Component {
                                     // textColor="none"
                                     className={classes.tab}
                                 >
-                                    <Tab icon={<FormatListBulletedIcon />} label="OKRs" />
+                                    <Tab icon={<FormatListBulletedIcon />} label="Personal OKRs" />
                                     <Tab icon={<GroupWorkIcon />} label="CoPom" />
                                 </Tabs>
                                 {this.state.mode ?

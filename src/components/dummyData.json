@@ -9,12 +9,14 @@
             {
                 "id": 0,
                 "result": "",
-                "metric": ""
+                "metric": "",
+                "progress" : [0,0,0,0,0,0,0,0,0,0,0,0]
             },
             {
                 "id": 1,
                 "result": "",
-                "metric": ""
+                "metric": "",
+                "progress" : [0,0,0,0,0,0,0,0,0,0,0,0]
             }
         ]
     },
@@ -28,12 +30,14 @@
             {
                 "id": 0,
                 "result": "",
-                "metric": ""
+                "metric": "",
+                "progress" : [0,0,0,0,0,0,0,0,0,0,0,0]
             },
             {
                 "id": 1,
                 "result": "",
-                "metric": ""
+                "metric": "",
+                "progress" : [0,0,0,0,0,0,0,0,0,0,0,0]
             }
         ]
     },

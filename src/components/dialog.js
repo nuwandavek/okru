@@ -125,7 +125,7 @@ class Edit extends React.Component {
         }
         const keyResults = [];
         showOKR.keyResults.forEach((d, i) => {
-            keyResults.push({ id: i, result: d.result, metric: d.metric });
+            keyResults.push({ id: i, result: d.result, metric: d.metric, progress: d.progress });
         })
 
 
@@ -154,7 +154,7 @@ class Edit extends React.Component {
 
         const keyResults = [];
         showOKR.keyResults.forEach((d, i) => {
-            keyResults.push({ id: i, result: d.result, metric: d.metric });
+            keyResults.push({ id: i, result: d.result, metric: d.metric, progress: d.progress });
         })
 
 
@@ -164,7 +164,7 @@ class Edit extends React.Component {
     addKR = event => {
         this.setState(state => {
             const newKR = state.keyResults;
-            newKR.push({ id: newKR.length, result: "", metric: "" });
+            newKR.push({ id: newKR.length, result: "", metric: "", progress: [0,0,0,0,0,0,0,0,0,0,0,0] });
             let temp = {
                 ...state,
                 keyResults: newKR
