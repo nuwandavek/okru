@@ -443,6 +443,7 @@ class CoPom extends React.Component {
         const { classes, following, user } = this.props;
 
         console.log('state of poms', this.state.poms);
+        console.log('state of mypoms', this.state.myPom);
 
 
 
