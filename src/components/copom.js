@@ -169,6 +169,15 @@ class CoPom extends React.Component {
                                 }
                             }
                         }
+                        else{
+                            myPom = {
+                                pommer: user.userID,
+                                time: 0,
+                                status: '',
+                                text: '',
+                                poms: 0,
+                            }
+                        }
 
                         // Iterate over all following
                         following.map(d => {
