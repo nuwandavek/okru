@@ -23,7 +23,7 @@ import FiberManualRecordOutlinedIcon from '@material-ui/icons/FiberManualRecordO
 import {
     Paper, Grid, Typography, ListItem, Button,
     ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Box, Breadcrumbs, Chip,
-    List, ListItemAvatar, Avatar, ListItemText, Fab, Divider, Switch
+    List, ListItemAvatar, Avatar, ListItemText, Fab, Divider, Switch, ButtonGroup
 } from '@material-ui/core';
 
 import jsPDF from 'jspdf';
@@ -64,7 +64,7 @@ const styles = theme => ({
         alignItems: 'flex-start'
     },
     brumb: {
-        padding: 20,
+        paddingTop: 20,
     },
     bound: {
         // borderRadius: "5px",
@@ -82,12 +82,12 @@ const styles = theme => ({
         paddingBottom: "10px",
         textAlign: 'left'
     },
-    descriptionPFM:{
+    descriptionPFM: {
         paddingBottom: "10px",
         textAlign: 'left',
         borderLeft: "5px #c0392b solid",
         paddingLeft: "20px",
-        
+
     },
     darkBackground: {
         background: "#333"
@@ -120,13 +120,13 @@ const styles = theme => ({
         paddingLeft: "20px",
         marginBottom: "10px"
     },
-    bubbles:{
-        flex:0,
+    bubbles: {
+        flex: 0,
         paddingRight: "10px",
         paddingTop: "10px",
         cursor: 'pointer'
     },
-    progressGrid:{
+    progressGrid: {
         height: "5px",
         // borderRadius: "5px"
     }
@@ -229,7 +229,7 @@ class Okrs extends React.Component {
         doc.setTextColor('#999')
         doc.setFontSize(15)
         doc.setFont('courier')
-        doc.text(parseInt(width / 2), y(10), user + '/'+year+'/'+quarter, { align: 'center' })
+        doc.text(parseInt(width / 2), y(10), user + '/' + year + '/' + quarter, { align: 'center' })
         doc.setFont('helvetica')
         doc.setTextColor('#000')
 
@@ -310,45 +310,45 @@ class Okrs extends React.Component {
     }
 
 
-    findWeeksinQuarter = (q,y) =>{
-        let jan1 = new Date(y,0,1)
-        let d1,d2;
-        if (q==='Q1'){
-            d1 = new Date(y,0,1)
-            d2 = new Date(y,2,31)
+    findWeeksinQuarter = (q, y) => {
+        let jan1 = new Date(y, 0, 1)
+        let d1, d2;
+        if (q === 'Q1') {
+            d1 = new Date(y, 0, 1)
+            d2 = new Date(y, 2, 31)
         }
-        else if (q==='Q2'){
-            d1 = new Date(y,3,1)
-            d2 = new Date(y,5,30)
+        else if (q === 'Q2') {
+            d1 = new Date(y, 3, 1)
+            d2 = new Date(y, 5, 30)
         }
-        else if (q==='Q3'){
-            d1 = new Date(y,6,1)
-            d2 = new Date(y,8,30)
+        else if (q === 'Q3') {
+            d1 = new Date(y, 6, 1)
+            d2 = new Date(y, 8, 30)
         }
-        else if (q==='Q4'){
-            d1 = new Date(y,9,1)
-            d2 = new Date(y,11,31)
+        else if (q === 'Q4') {
+            d1 = new Date(y, 9, 1)
+            d2 = new Date(y, 11, 31)
         }
 
-        let w1 = Math.ceil(((d1 - jan1 + 86400000)/86400000)/7);
-        let w2 = Math.ceil(((d2 - jan1 + 86400000)/86400000)/7)
+        let w1 = Math.ceil(((d1 - jan1 + 86400000) / 86400000) / 7);
+        let w2 = Math.ceil(((d2 - jan1 + 86400000) / 86400000) / 7)
 
-        return (w2-w1+1);
-        
+        return (w2 - w1 + 1);
+
     }
 
 
-    findWidth = (okr,id) => {
-        let idCounts = [0,0,0,0];
+    findWidth = (okr, id) => {
+        let idCounts = [0, 0, 0, 0];
 
-        okr.keyResults.map(d=>{
-            d.progress.map(f=>{
-                idCounts[f]+=1;
+        okr.keyResults.map(d => {
+            d.progress.map(f => {
+                idCounts[f] += 1;
             })
         })
 
-        
-        return idCounts[id]*200/idCounts.reduce((a, v) => a + v);
+
+        return idCounts[id] * 200 / idCounts.reduce((a, v) => a + v);
 
     }
 
@@ -361,20 +361,33 @@ class Okrs extends React.Component {
             : <Typography variant="caption">Follow</Typography>)
 
         // let weeks = new Array(this.findWeeksinQuarter(quarter,year)).fill(-1);
-        
+
         // console.log(weeks);
-        
+
 
 
         return (
             <Paper className={classes.root} elevation={0}>
                 <Grid container direction="row" justify="space-between" alignItems="center">
-                    <Breadcrumbs className={classes.brumb} aria-label="breadcrumb">
-                        <Typography color="inherit">OKRs</Typography>
-                        <Typography color="inherit">{userBeingViewed}</Typography>
-                        <Typography color="inherit">{year}</Typography>
-                        <Typography color="textPrimary">{quarter}</Typography>
-                    </Breadcrumbs>
+
+                    <Grid>
+                        <Breadcrumbs className={classes.brumb} aria-label="breadcrumb">
+                            <Typography variant="h6" color="textPrimary">OKRs</Typography>
+                            <Typography variant="h6" color="textPrimary">{userBeingViewed}</Typography>
+                            <Typography variant="h6" color="textPrimary">{year}</Typography>
+                            <Typography variant="h6" color="textPrimary">{quarter}</Typography>
+                        </Breadcrumbs>
+                        <Grid container direction="row" justify="center" alignItems="center">
+                            <Typography variant="caption">All Quarters : </Typography>
+                            <ButtonGroup variant="text" color="default" aria-label="outlined primary button group" size="small">
+                            <Button onClick={() => (window.location.href = '/?m=okrs&user='+userBeingViewed+'&q=1&y='+year.replace('Y',''))}>Q1</Button>
+                            <Button onClick={() => (window.location.href = '/?m=okrs&user='+userBeingViewed+'&q=2&y='+year.replace('Y',''))}>Q2</Button>
+                            <Button onClick={() => (window.location.href = '/?m=okrs&user='+userBeingViewed+'&q=3&y='+year.replace('Y',''))}>Q3</Button>
+                            <Button onClick={() => (window.location.href = '/?m=okrs&user='+userBeingViewed+'&q=4&y='+year.replace('Y',''))}>Q4</Button>
+                        </ButtonGroup>
+                        </Grid>
+
+                    </Grid>
 
                     {selfView && isSignedIn ?
 
@@ -400,7 +413,8 @@ class Okrs extends React.Component {
                         />{followText}</Box> : '')}
 
                 </Grid>
-                {okrList.length > 0 ? (okrList.map((okr,k) => (<ExpansionPanel key={okr.id} elevation={0}>
+
+                {okrList.length > 0 ? (okrList.map((okr, k) => (<ExpansionPanel key={okr.id} elevation={0}>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={"panel-" + okr.id + "-content"}
@@ -412,12 +426,12 @@ class Okrs extends React.Component {
                                 <Grid container direction="row">
                                     <Typography className={classes.bold}>{okr.title}</Typography>
                                     <Grid container direction="row">
-                                        
-                                        <Grid className={classes.progressGrid} style={{background:"#c0392b",width:this.findWidth(okr,1)}}></Grid>
-                                        <Grid className={classes.progressGrid} style={{background:"#f1c40f",width:this.findWidth(okr,2)}}></Grid>
-                                        <Grid className={classes.progressGrid} style={{background:"#27ae60",width:this.findWidth(okr,3)}}></Grid>
-                                        <Grid className={classes.progressGrid} style={{background:"#bdc3c7",width:this.findWidth(okr,0)}}></Grid>
-                                                
+
+                                        <Grid className={classes.progressGrid} style={{ background: "#c0392b", width: this.findWidth(okr, 1) }}></Grid>
+                                        <Grid className={classes.progressGrid} style={{ background: "#f1c40f", width: this.findWidth(okr, 2) }}></Grid>
+                                        <Grid className={classes.progressGrid} style={{ background: "#27ae60", width: this.findWidth(okr, 3) }}></Grid>
+                                        <Grid className={classes.progressGrid} style={{ background: "#bdc3c7", width: this.findWidth(okr, 0) }}></Grid>
+
                                     </Grid>
                                 </Grid>
                                 <Typography variant="body2" className={classes.description}>
@@ -447,44 +461,44 @@ class Okrs extends React.Component {
                                     <ListItemText primary={kr.result} secondary={"System Metric : " + kr.metric} className={classes.kr}/>
                                     */}
                                     <Grid container direction="column" justify="center" alignItems="flex-start">
-                                    <Typography>{kr.result}</Typography>
-                                    <Chip
-                                        icon={<SpeedIcon />}
-                                        label={<Typography variant="caption">System Metric : <Typography variant="button">{kr.metric}</Typography></Typography>}                                   
-                                        size="small"
-                                        color="default"
+                                        <Typography>{kr.result}</Typography>
+                                        <Chip
+                                            icon={<SpeedIcon />}
+                                            label={<Typography variant="caption">System Metric : <Typography variant="button">{kr.metric}</Typography></Typography>}
+                                            size="small"
+                                            color="default"
                                         // variant="outlined"
-                                    />
-                                    <Grid container direction="row">
-                                        {   
-                                            kr.progress.map((d,j)=>{
-                                                let weekLabel = <Typography variant="caption">{'W'+(j+1)}</Typography>;
-                                                let circleColor;
-                                                if(d===0) circleColor = "#bdc3c7";
-                                                else if(d===1)  circleColor =  "#c0392b";
-                                                else if(d===2)  circleColor =  "#f1c40f";
-                                                else  circleColor =  "#27ae60";
-                                                let circle = <FiberManualRecordIcon 
-                                                onClick={()=>updateProgress(k,i,j)} 
-                                                fontSize="small"  key={k*100 + i * 10 + j} style={{color:circleColor}}/>
-                                                return (
-                                                    <Grid container direction="column"  key={k*100 + i * 10 + j} className={classes.bubbles} alignItems="center">
-                                                        
-                                                        {circle}
-                                                        {weekLabel}
-                                                    </Grid>
-                                                )
-                                            })
-                                        }
-                                    </Grid>
+                                        />
+                                        <Grid container direction="row">
+                                            {
+                                                kr.progress.map((d, j) => {
+                                                    let weekLabel = <Typography variant="caption">{'W' + (j + 1)}</Typography>;
+                                                    let circleColor;
+                                                    if (d === 0) circleColor = "#bdc3c7";
+                                                    else if (d === 1) circleColor = "#c0392b";
+                                                    else if (d === 2) circleColor = "#f1c40f";
+                                                    else circleColor = "#27ae60";
+                                                    let circle = <FiberManualRecordIcon
+                                                        onClick={() => updateProgress(k, i, j)}
+                                                        fontSize="small" key={k * 100 + i * 10 + j} style={{ color: circleColor }} />
+                                                    return (
+                                                        <Grid container direction="column" key={k * 100 + i * 10 + j} className={classes.bubbles} alignItems="center">
+
+                                                            {circle}
+                                                            {weekLabel}
+                                                        </Grid>
+                                                    )
+                                                })
+                                            }
+                                        </Grid>
 
                                     </Grid>
-                                    
-                                    
+
+
                                 </ListItem>
                             ))}
                         </List>
-                        
+
                         {/* <Grid container direction="row">
                             <Chip
                                         label={<Typography variant="overline">Possible Failure Mode</Typography>}                                   
@@ -493,8 +507,8 @@ class Okrs extends React.Component {
                                         // variant="outlined"
                                     /> */}
                         <Typography variant="body2" className={classes.descriptionPFM}>
-                        <b>Possible Failure Mode : </b>
-                        {okr.failureMode}
+                            <b>Possible Failure Mode : </b>
+                            {okr.failureMode}
                         </Typography>
                         {/* </Grid> */}
                         <Grid container direction="row" justify="flex-end" style={{ width: '100%', display: "flex" }}>
@@ -510,7 +524,7 @@ class Okrs extends React.Component {
 
                     </ExpansionPanelDetails>
                 </ExpansionPanel>))) :
-                    <Typography style={{margin: "30px"}}>No OKRs yet!</Typography>
+                    <Typography style={{ margin: "30px" }}>No OKRs yet!</Typography>
                 }
                 {selfView && isSignedIn ? <Grid container direction="column" alignItems="center" justify="center" className={classes.homeAdd}>
                     <Fab color="primary" aria-label="add" className={classes.edit} onClick={() => handleOpenDialog(null)}>
