@@ -132,10 +132,10 @@ class FrontPage extends React.Component {
                         <br></br> 
                         <br></br> 
                         But from the moment we wake up every morning to the moment we fall asleep, we are subject to an onslaught of tools weaponized to capture our attention, and distract us, in some shape or form. I am convinced that discipline and self accountability separate people who do kickass things from people who do not, far more than intelligence or 'talent' (There's of course a lot of self-selection and positive feedback loops, but I think this broadly holds). Deceiving oneself with feel-good narratives is one of the easiest things to do. There are always legitimate and valid reasons for not spending time on our goals, right? I want to be more accountable to myself. I want to set ambitious goals, make public commitments and track this over a long time. I want to talk less, and act more - deliberately and decisively - with delightfully fun tools helping me navigate the terrain. I hope OKRU will eventually evolve to solve some of this need.</Typography>
-                        <Typography variant="h2" style={{ textAlign: 'center' }}>
+                        <Typography variant="h2" style={{ textAlign: 'left', width: "100%"}}>
                             “Is this yet-another-habit-tracking-app?”
                         </Typography>
-                        <Typography variant="h2" style={{ textAlign: 'center' }}>
+                        <Typography variant="h2" style={{ textAlign: 'right', width: "100%" }}>
                             No. Hopefully :)
                         </Typography>
                     </Grid>
@@ -162,7 +162,7 @@ class FrontPage extends React.Component {
                         </Typography>
 
                         <Typography variant="caption">
-                            * Much of the content here is just a condensed, and cached form of things said by much smarter people in books, tweets and talks.
+                            * Much of the content here is just a condensed, and cached form of things said by much smarter people in <a href="https://jamesclear.com/atomic-habits">books</a>, <a href="https://twitter.com/naval/status/1084739181593559040">tweets</a> and <a href="https://nav.al/addiction">talks</a>.
                     </Typography>
                     </Grid>
                 </Grid>
@@ -239,6 +239,7 @@ Print 'em out!                                    </Typography>
                     <Grid container direction="column" justify="center" alignItems="center"  item xs={10} sm={6} md={6} lg={6} xl={4}>
                         <Typography>
                         The idea is to build OKRU, over time, to be useful. So, you can fully expect current useless features to be mercilessly removed, and new features to be added. I'm working on more minute privacy controls and a short mail digest each week of friends' updates, as you read this. Do add your OKRs, CoPom with friends, and let me know how it goes!
+                        <br></br>You can also add issues/new feature requests on <a href="https://github.com/nuwandavek/okru/issues">Github Issues</a>.
                         <br></br><br></br> 
                         Reach out to me in case you have any questions or want to discuss about it, at vivekaithal44[at]gmail[dot]com or <a href="https://twitter.com/nuwandavek">@nuwandavek</a>. Hope you get cracking on your goals! I send you much love from my end. :)
                         </Typography>
