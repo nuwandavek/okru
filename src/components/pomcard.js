@@ -48,6 +48,9 @@ const styles = theme => ({
         
         },
     },
+    buttonPlay:{
+        width: "auto !important",
+    }
 });
 
 
@@ -88,7 +91,7 @@ class PomCard extends React.Component {
 
 
         return (
-            <Grid md={3} item container className={`${classes.pomcards} ${selfPom ? classes.outline : ""}`} 
+            <Grid item container className={`${classes.pomcards} ${selfPom ? classes.outline : ""} ${classes.buttonPlay}`} 
             direction="column" justify="space-around" alignItems="center">
 
                     <Link color="inherit" href={"/?user=" + pomData.pommer}>
@@ -112,7 +115,7 @@ class PomCard extends React.Component {
 
 
                 {selfPom?
-                    <Grid container direction="row" justify="space-evenly">
+                    <Grid container direction="row" justify="space-evenly" className={classes.buttonPlay}>
                         {this.state.status==='inprogress'?
                         (
                         !this.state.textEdit?
