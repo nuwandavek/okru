@@ -5,27 +5,9 @@ This is a ***Measure What Matters*** meets ***Elephant In The Brain*** meets ***
 
 Checkout the issues and the kanban for this project!
 
-## Features : Now - Prod
-- Add/edit OKRs (Os, KRs, failure modes, categories)
-- Google login
-- Follow people
-- Printable OKRs
-
-## Features : Now - Dev Complete
-- Search by user name
-
-## Features : To Be Added
-- Followers list
-- Char limit
-- Update progress on OKRs
-    - Week Bubbles
-    - Notes
-    - Aggregation 
-- Mail cues for updates and aggregate updates of people you're following
-- All Q agg view
-- Import from last quarter
-- People can interact?
-
+## What is this?
+- Checkout the motivation behind okru : https://medium.com/@nuwandavek/okru-part-1-of-goals-friends-and-our-silly-brains-df2aac57a567
+- Checkout the features of okru : https://medium.com/@nuwandavek/okru-part-2-features-dreams-and-promises-ef0ae394375a
 ```
 For any feedback, comments or discussion, you can reach out to me at vivekaithal44[at]gmail[dot]com
 ```
