@@ -50,7 +50,8 @@ const styles = theme => ({
     },
     buttonPlay:{
         width: "auto !important",
-    }
+        marginBottom: "5px",
+    },
 });
 
 
